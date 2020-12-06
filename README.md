@@ -1,5 +1,5 @@
 # netDxf
-netDxf 3.0.0 Copyright(C) 2009-2020 Daniel Carvajal, Licensed under LGPL
+netDxf for NET 5.0 Copyright(C) 2009-2020 Daniel Carvajal, Licensed under LGPL
 ## Description
 netDxf is a .net library programmed in C# to read and write AutoCAD DXF files. It supports AutoCad2000, AutoCad2004, AutoCad2007, AutoCad2010,  AutoCad2013, and AutoCad2018 DXF database versions, in both text and binary format.
 
@@ -41,7 +41,7 @@ Well, at the moment they are just tests for the work in progress.
 ## Compiling
 To compile the source code you will need Visual Studio 2019.
 ## Development Status 
-See [changelog.txt](https://github.com/haplokuon/netDxf/blob/master/doc/Changelog.txt) or the [wiki page](https://github.com/haplokuon/netDxf/wiki) for information on the latest changes.
+See [changelog.txt](https://github.com/haplokuon/netDxf/blob/net_5.0/doc/Changelog.txt) for information on the latest changes.
 ## Supported entities
 * 3dFace
 * Arc
