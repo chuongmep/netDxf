@@ -20,7 +20,7 @@ public static void Main()
 	// an entity
 	Line entity = new Line(new Vector2(5, 5), new Vector2(10, 5));
 	// add your entities here
-	doc.AddEntity(entity);
+	doc.Entities.Add(entity);
 	// save to file
 	doc.Save(file);
 
