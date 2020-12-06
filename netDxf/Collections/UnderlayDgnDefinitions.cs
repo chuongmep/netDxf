@@ -61,14 +61,19 @@ namespace netDxf.Collections
         internal override UnderlayDgnDefinition Add(UnderlayDgnDefinition underlayDgnDefinition, bool assignHandle)
         {
             if (underlayDgnDefinition == null)
+            {
                 throw new ArgumentNullException(nameof(underlayDgnDefinition));
+            }
 
-            UnderlayDgnDefinition add;
-            if (this.list.TryGetValue(underlayDgnDefinition.Name, out add))
+            if (this.list.TryGetValue(underlayDgnDefinition.Name, out UnderlayDgnDefinition add))
+            {
                 return add;
+            }
 
             if (assignHandle || string.IsNullOrEmpty(underlayDgnDefinition.Handle))
+            {
                 this.Owner.NumHandles = underlayDgnDefinition.AssignHandle(this.Owner.NumHandles);
+            }
 
             this.list.Add(underlayDgnDefinition.Name, underlayDgnDefinition);
             this.references.Add(underlayDgnDefinition.Name, new List<DxfObject>());
@@ -102,16 +107,24 @@ namespace netDxf.Collections
         public override bool Remove(UnderlayDgnDefinition item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             if (this.references[item.Name].Count != 0)
+            {
                 return false;
+            }
 
             this.Owner.AddedObjects.Remove(item.Handle);
             this.references.Remove(item.Name);
@@ -132,7 +145,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another DGN underlay definition with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (UnderlayDgnDefinition) sender);

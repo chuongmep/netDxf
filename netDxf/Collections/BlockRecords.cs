@@ -66,8 +66,7 @@ namespace netDxf.Collections
                 throw new ArgumentNullException(nameof(block));
             }
 
-            Block add;
-            if (this.list.TryGetValue(block.Name, out add))
+            if (this.list.TryGetValue(block.Name, out Block add))
             {
                 return add;
             }

@@ -95,8 +95,10 @@ namespace netDxf.Entities
             get { return this.direction; }
             set
             {
-                if(Vector3.Equals(Vector3.Zero, value))
+                if (Vector3.Equals(Vector3.Zero, value))
+                {
                     throw new ArgumentException("The direction can not be the zero vector.", nameof(value));
+                }
 
                 this.direction = Vector3.Normalize(value);
             }
@@ -117,11 +119,17 @@ namespace netDxf.Entities
             this.Origin = transformation * this.Origin + translation;
 
             Vector3 newDirection = transformation * this.Direction;
-            if (Vector3.Equals(Vector3.Zero, newDirection)) newDirection = this.Direction;
+            if (Vector3.Equals(Vector3.Zero, newDirection))
+            {
+                newDirection = this.Direction;
+            }
             this.Direction = newDirection;
 
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
             this.Normal = newNormal;
         }
 
@@ -148,7 +156,9 @@ namespace netDxf.Entities
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

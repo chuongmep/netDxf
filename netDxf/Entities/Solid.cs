@@ -155,7 +155,10 @@ namespace netDxf.Entities
         public override void TransformBy(Matrix3 transformation, Vector3 translation)
         {
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();
@@ -212,7 +215,9 @@ namespace netDxf.Entities
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

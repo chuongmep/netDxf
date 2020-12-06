@@ -65,8 +65,7 @@ namespace netDxf.Collections
                 throw new ArgumentNullException(nameof(imageDefinition));
             }
 
-            ImageDefinition add;
-            if (this.list.TryGetValue(imageDefinition.Name, out add))
+            if (this.list.TryGetValue(imageDefinition.Name, out ImageDefinition add))
             {
                 return add;
             }
@@ -108,16 +107,24 @@ namespace netDxf.Collections
         public override bool Remove(ImageDefinition item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             if (this.references[item.Name].Count != 0)
+            {
                 return false;
+            }
 
             this.Owner.AddedObjects.Remove(item.Handle);
             this.references.Remove(item.Name);
@@ -138,7 +145,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another image definition with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (ImageDefinition) sender);

@@ -60,14 +60,19 @@ namespace netDxf.Collections
         internal override TextStyle Add(TextStyle style, bool assignHandle)
         {
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
 
-            TextStyle add;
-            if (this.list.TryGetValue(style.Name, out add))
+            if (this.list.TryGetValue(style.Name, out TextStyle add))
+            {
                 return add;
+            }
 
             if (assignHandle || string.IsNullOrEmpty(style.Handle))
+            {
                 this.Owner.NumHandles = style.AssignHandle(this.Owner.NumHandles);
+            }
 
             this.list.Add(style.Name, style);
             this.references.Add(style.Name, new List<DxfObject>());
@@ -101,16 +106,24 @@ namespace netDxf.Collections
         public override bool Remove(TextStyle item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             if (this.references[item.Name].Count != 0)
+            {
                 return false;
+            }
 
             this.Owner.AddedObjects.Remove(item.Handle);
             this.references.Remove(item.Name);
@@ -131,7 +144,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another text style with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (TextStyle) sender);

@@ -425,7 +425,10 @@ namespace netDxf.Entities
             }
 
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();
@@ -518,10 +521,14 @@ namespace netDxf.Entities
             };
 
             foreach (HatchBoundaryPath path in this.boundaryPaths)
+            {
                 entity.boundaryPaths.Add((HatchBoundaryPath) path.Clone());
+            }
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }
@@ -534,7 +541,9 @@ namespace netDxf.Entities
         {
             // null items are not allowed in the list.
             if (e.Item == null)
+            {
                 e.Cancel = true;
+            }
             e.Cancel = false;
         }
 

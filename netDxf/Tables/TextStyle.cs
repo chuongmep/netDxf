@@ -1,4 +1,4 @@
-﻿#region netDxf library, Copyright (C) 2009-2019 Daniel Carvajal (haplokuon@gmail.com)
+﻿#region netDxf library, Copyright (C) 2009-2020 Daniel Carvajal (haplokuon@gmail.com)
 
 //                        netDxf library
 // Copyright (C) 2009-2019 Daniel Carvajal (haplokuon@gmail.com)
@@ -23,7 +23,6 @@
 using System;
 using System.IO;
 using netDxf.Collections;
-using System.Drawing.Text;
 
 namespace netDxf.Tables
 {
@@ -346,45 +345,6 @@ namespace netDxf.Tables
         {
             get { return (TextStyles) base.Owner; }
             internal set { base.Owner = value; }
-        }
-
-        #endregion
-
-        #region public methods
-
-        /// <summary>
-        /// Find the font family name of an specified TTF font file.
-        /// </summary>
-        /// <param name="ttfFont">TTF font file.</param>
-        /// <returns>The font family name of the specified TTF font file.</returns>
-        /// <remarks>This method will return an empty string if the specified font is not found in its path or the system font folder or if it is not a valid TTF font.</remarks>
-        public static string TrueTypeFontFamilyName(string ttfFont)
-        {
-            if (string.IsNullOrEmpty(ttfFont)) throw new ArgumentNullException(nameof(ttfFont));
-
-            // the following information is only applied to TTF not SHX fonts
-            if (!Path.GetExtension(ttfFont).Equals(".TTF", StringComparison.InvariantCultureIgnoreCase))
-                return string.Empty;
-
-            // try to find the file in the specified directory, if not try it in the fonts system folder
-            string fontFile = File.Exists(ttfFont) ?
-                Path.GetFullPath(ttfFont) :
-                string.Format("{0}{1}{2}", Environment.GetFolderPath(Environment.SpecialFolder.Fonts), Path.DirectorySeparatorChar, Path.GetFileName(ttfFont));
-
-            PrivateFontCollection fontCollection = new PrivateFontCollection();
-            try
-            {              
-                fontCollection.AddFontFile(fontFile);
-                return fontCollection.Families[0].Name;
-            }
-            catch (FileNotFoundException)
-            {
-                return string.Empty;
-            }
-            finally
-            {
-                fontCollection.Dispose();
-            }
         }
 
         #endregion

@@ -76,7 +76,9 @@ namespace netDxf.Entities
         {
             this.center = center;
             if (radius <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(radius), radius, "The circle radius must be greater than zero.");
+            }
             this.radius = radius;
             this.startAngle = MathHelper.NormalizeAngle(startAngle);
             this.endAngle = MathHelper.NormalizeAngle(endAngle);
@@ -149,12 +151,17 @@ namespace netDxf.Entities
         public List<Vector2> PolygonalVertexes(int precision)
         {
             if (precision < 2)
+            {
                 throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be greater or equal to three");
+            }
 
             List<Vector2> ocsVertexes = new List<Vector2>();
             double start = this.startAngle*MathHelper.DegToRad;
             double end = this.endAngle*MathHelper.DegToRad;
-            if (end < start) end += MathHelper.TwoPI;
+            if (end < start)
+            {
+                end += MathHelper.TwoPI;
+            }
             double delta = (end - start)/precision;
             for (int i = 0; i <= precision; i++)
             {
@@ -214,7 +221,10 @@ namespace netDxf.Entities
         {
             Vector3 newCenter = transformation * this.Center + translation;
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();
@@ -224,7 +234,10 @@ namespace netDxf.Entities
             axis = transWO * axis;
             Vector2 axisPoint = new Vector2(axis.X, axis.Y);
             double newRadius = axisPoint.Modulus();
-            if (MathHelper.IsZero(newRadius)) newRadius = MathHelper.Epsilon;
+            if (MathHelper.IsZero(newRadius))
+            {
+                newRadius = MathHelper.Epsilon;
+            }
 
             Vector2 start = Vector2.Rotate(new Vector2(this.Radius, 0.0), this.StartAngle * MathHelper.DegToRad);
             Vector2 end = Vector2.Rotate(new Vector2(this.Radius, 0.0), this.EndAngle * MathHelper.DegToRad);
@@ -282,7 +295,9 @@ namespace netDxf.Entities
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

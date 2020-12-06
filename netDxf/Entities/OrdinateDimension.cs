@@ -88,7 +88,9 @@ namespace netDxf.Entities
             this.axis = vec.Y > vec.X ? OrdinateDimensionAxis.X : OrdinateDimensionAxis.Y;
             this.rotation = 0.0;
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
         }
 
@@ -110,7 +112,9 @@ namespace netDxf.Entities
             this.axis = axis;
             this.rotation = 0.0;
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
         }
 
@@ -174,12 +178,17 @@ namespace netDxf.Entities
             this.axis = axis;
 
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
 
             double angle = rotation * MathHelper.DegToRad;
+            if (this.Axis == OrdinateDimensionAxis.X)
+            {
+                angle += MathHelper.HalfPI;
+            }
 
-            if (this.Axis == OrdinateDimensionAxis.X) angle += MathHelper.HalfPI;
             this.secondPoint = Vector2.Polar(featurePoint, length, angle);
             this.textRefPoint = this.secondPoint;
         }
@@ -258,7 +267,10 @@ namespace netDxf.Entities
         public override void TransformBy(Matrix3 transformation, Vector3 translation)
         {
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();
@@ -368,14 +380,14 @@ namespace netDxf.Entities
 
             foreach (DimensionStyleOverride styleOverride in this.StyleOverrides.Values)
             {
-                ICloneable value = styleOverride.Value as ICloneable;
-                object copy = value != null ? value.Clone() : styleOverride.Value;
-
+                object copy = styleOverride.Value is ICloneable value ? value.Clone() : styleOverride.Value;
                 entity.StyleOverrides.Add(new DimensionStyleOverride(styleOverride.Type, copy));
             }
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

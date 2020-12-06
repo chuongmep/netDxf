@@ -220,7 +220,7 @@ namespace netDxf.Entities
                 this.vertexes[i].Bulge = -this.vertexes[i+1].Bulge;
             }
 
-            this.vertexes[this.vertexes.Count - 1].Bulge = -firstBulge;
+            this.vertexes[^1].Bulge = -firstBulge;
         }
 
         /// <summary>
@@ -420,9 +420,11 @@ namespace netDxf.Entities
                             Vector2 prevCurvePoint = p1;
                             for (int i = 1; i <= bulgePrecision; i++)
                             {
-                                Vector2 curvePoint = new Vector2();
-                                curvePoint.X = center.X + Math.Cos(i * angle) * a1.X - Math.Sin(i * angle) * a1.Y;
-                                curvePoint.Y = center.Y + Math.Sin(i * angle) * a1.X + Math.Cos(i * angle) * a1.Y;
+                                Vector2 curvePoint = new Vector2
+                                {
+                                    X = center.X + Math.Cos(i * angle) * a1.X - Math.Sin(i * angle) * a1.Y,
+                                    Y = center.Y + Math.Sin(i * angle) * a1.X + Math.Cos(i * angle) * a1.Y
+                                };
 
                                 if (!curvePoint.Equals(prevCurvePoint, weldThreshold) && !curvePoint.Equals(p2, weldThreshold))
                                 {
@@ -461,7 +463,10 @@ namespace netDxf.Entities
         {
             double newElevation = this.Elevation;
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();

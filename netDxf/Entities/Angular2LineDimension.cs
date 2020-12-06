@@ -96,17 +96,25 @@ namespace netDxf.Entities
         /// <param name="firstLine">First <see cref="Line">line</see> that defines the angle to measure.</param>
         /// <param name="secondLine">Second <see cref="Line">line</see> that defines the angle to measure.</param>
         /// <param name="offset">Distance between the center point and the dimension line.</param>
+        /// <param name="normal">Normal vector of the plane where the dimension is defined.</param>
         /// <param name="style">The <see cref="DimensionStyle">style</see> to use with the dimension.</param>
         public Angular2LineDimension(Line firstLine, Line secondLine, double offset, Vector3 normal, DimensionStyle style)
             : base(DimensionType.Angular)
         {
             if (firstLine == null)
+            {
                 throw new ArgumentNullException(nameof(firstLine));
+            }
+
             if (secondLine == null)
+            {
                 throw new ArgumentNullException(nameof(secondLine));
+            }
 
             if (Vector3.AreParallel(firstLine.Direction, secondLine.Direction))
+            {
                 throw new ArgumentException("The two lines that define the dimension are parallel.");
+            }
 
             List<Vector3> ocsPoints =
                 MathHelper.Transform(
@@ -124,11 +132,14 @@ namespace netDxf.Entities
             this.startSecondLine = new Vector2(ocsPoints[2].X, ocsPoints[2].Y);
             this.endSecondLine = new Vector2(ocsPoints[3].X, ocsPoints[3].Y);
             if (offset < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset), "The offset value must be equal or greater than zero.");
+            }
             this.offset = offset;
-
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
             this.Normal = normal;
             this.Elevation = ocsPoints[0].Z;
@@ -163,7 +174,9 @@ namespace netDxf.Entities
             Vector2 dir1 = endFirstLine - startFirstLine;
             Vector2 dir2 = endSecondLine - startSecondLine;
             if (Vector2.AreParallel(dir1, dir2))
+            {
                 throw new ArgumentException("The two lines that define the dimension are parallel.");
+            }
 
             this.startFirstLine = startFirstLine;
             this.endFirstLine = endFirstLine;
@@ -171,11 +184,15 @@ namespace netDxf.Entities
             this.endSecondLine = endSecondLine;
 
             if (offset < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset), "The offset value must be equal or greater than zero.");
+            }
             this.offset = offset;
 
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
             this.Update();
         }
@@ -254,7 +271,9 @@ namespace netDxf.Entities
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), "The offset value must be equal or greater than zero.");
+                }
                 this.offset = value;
             }
         }
@@ -299,7 +318,9 @@ namespace netDxf.Entities
             Vector2 dir1 = this.endFirstLine - this.startFirstLine;
             Vector2 dir2 = this.endSecondLine - this.startSecondLine;
             if (Vector2.AreParallel(dir1, dir2))
+            {
                 throw new ArgumentException("The two lines that define the dimension are parallel.");
+            }
 
             Vector2 center = this.CenterPoint;
 
@@ -363,12 +384,12 @@ namespace netDxf.Entities
                 double textGap = this.Style.TextOffset;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.TextOffset, out styleOverride))
                 {
-                    textGap = (double)styleOverride.Value;
+                    textGap = (double) styleOverride.Value;
                 }
                 double scale = this.Style.DimScaleOverall;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.DimScaleOverall, out styleOverride))
                 {
-                    scale = (double)styleOverride.Value;
+                    scale = (double) styleOverride.Value;
                 }
 
                 double gap = textGap * scale;
@@ -464,7 +485,9 @@ namespace netDxf.Entities
             Vector2 dir1 = this.endFirstLine - this.startFirstLine;
             Vector2 dir2 = this.endSecondLine - this.startSecondLine;
             if (Vector2.AreParallel(dir1, dir2))
+            {
                 throw new ArgumentException("The two lines that define the dimension are parallel.");
+            }
 
             DimensionStyleOverride styleOverride;
 
@@ -558,14 +581,14 @@ namespace netDxf.Entities
 
             foreach (DimensionStyleOverride styleOverride in this.StyleOverrides.Values)
             {
-                ICloneable value = styleOverride.Value as ICloneable;
-                object copy = value != null ? value.Clone() : styleOverride.Value;
-
+                object copy = styleOverride.Value is ICloneable value ? value.Clone() : styleOverride.Value;
                 entity.StyleOverrides.Add(new DimensionStyleOverride(styleOverride.Type, copy));
             }
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

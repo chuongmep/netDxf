@@ -100,11 +100,15 @@ namespace netDxf.Entities
             : base(EntityType.Underlay, DxfObjectCode.Underlay)
         {
             if (definition == null)
+            {
                 throw new ArgumentNullException(nameof(definition));
+            }
             this.definition = definition;
             this.position = position;
             if (scale <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scale), scale, "The Underlay scale must be greater than zero.");
+            }
             this.scale = new Vector2(scale);
             this.rotation = 0.0;
             this.contrast = 100;
@@ -271,7 +275,10 @@ namespace netDxf.Entities
         {
             Vector3 newPosition = transformation * this.Position + translation;
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
 

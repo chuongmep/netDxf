@@ -204,7 +204,9 @@ namespace netDxf.Entities
             set
             {
                 if (value < -1)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), "The stacking value must be greater than -1.");
+                }
                 this.stacking = value;
             }
         }
@@ -492,7 +494,10 @@ namespace netDxf.Entities
         public override void TransformBy(Matrix3 transformation, Vector3 translation)
         {
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
             this.Normal = newNormal;
 
             EntityObject clippingEntity = this.ClippingBoundary;

@@ -28,7 +28,7 @@ using Attribute = netDxf.Entities.Attribute;
 namespace netDxf.Collections
 {
     /// <summary>
-    /// Represents a collection of <see cref="Entities.Attribute">Attributes</see>.
+    /// Represents a collection of <see cref="Attribute">Attributes</see>.
     /// </summary>
     public sealed class AttributeCollection :
         IReadOnlyList<Attribute>

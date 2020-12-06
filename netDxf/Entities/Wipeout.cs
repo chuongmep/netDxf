@@ -84,7 +84,9 @@ namespace netDxf.Entities
             : base(EntityType.Wipeout, DxfObjectCode.Wipeout)
         {
             if (clippingBoundary == null)
+            {
                 throw new ArgumentNullException(nameof(clippingBoundary));
+            }
             this.clippingBoundary = clippingBoundary;
             this.elevation = 0.0;
         }
@@ -102,7 +104,9 @@ namespace netDxf.Entities
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
                 this.clippingBoundary = value;
             }
         }
@@ -132,7 +136,10 @@ namespace netDxf.Entities
             double newElevation = this.Elevation;
 
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();
@@ -179,7 +186,9 @@ namespace netDxf.Entities
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

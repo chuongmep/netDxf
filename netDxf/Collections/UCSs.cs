@@ -61,14 +61,19 @@ namespace netDxf.Collections
         internal override UCS Add(UCS ucs, bool assignHandle)
         {
             if (ucs == null)
+            {
                 throw new ArgumentNullException(nameof(ucs));
+            }
 
-            UCS add;
-            if (this.list.TryGetValue(ucs.Name, out add))
+            if (this.list.TryGetValue(ucs.Name, out UCS add))
+            {
                 return add;
+            }
 
             if (assignHandle || string.IsNullOrEmpty(ucs.Handle))
+            {
                 this.Owner.NumHandles = ucs.AssignHandle(this.Owner.NumHandles);
+            }
 
             this.list.Add(ucs.Name, ucs);
             this.references.Add(ucs.Name, new List<DxfObject>());
@@ -102,16 +107,24 @@ namespace netDxf.Collections
         public override bool Remove(UCS item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             if (this.references[item.Name].Count != 0)
+            {
                 return false;
+            }
 
             this.Owner.AddedObjects.Remove(item.Handle);
             this.references.Remove(item.Name);
@@ -132,7 +145,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another UCS with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (UCS) sender);

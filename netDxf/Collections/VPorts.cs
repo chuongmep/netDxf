@@ -71,22 +71,6 @@ namespace netDxf.Collections
         internal override VPort Add(VPort vport, bool assignHandle)
         {
             throw new ArgumentException("VPorts cannot be added to the collection. There is only one VPort in the list the \"*Active\".", nameof(vport));
-
-            //if (this.list.Count >= this.maxCapacity)
-            //    throw new OverflowException(string.Format("Table overflow. The maximum number of elements the table {0} can have is {1}", this.codeName, this.maxCapacity));
-
-            //VPort add;
-            //if (this.list.TryGetValue(vport.Name, out add))
-            //    return add;
-
-            //if (assignHandle || string.IsNullOrEmpty(vport.Handle))
-            //    this.document.NumHandles = vport.AsignHandle(this.document.NumHandles);
-
-            //this.list.Add(vport.Name, vport);
-            //this.references.Add(vport.Name, new List<DxfObject>());
-            //vport.Owner = this;
-            //this.document.AddedObjects.Add(vport.Handle, vport);
-            //return vport;
         }
 
         /// <summary>
@@ -98,8 +82,6 @@ namespace netDxf.Collections
         public override bool Remove(string name)
         {
             throw new ArgumentException("VPorts cannot be removed from the collection.", nameof(name));
-
-            //return this.Remove(this[name]);
         }
 
         /// <summary>
@@ -111,25 +93,6 @@ namespace netDxf.Collections
         public override bool Remove(VPort item)
         {
             throw new ArgumentException("VPorts cannot be removed from the collection.", nameof(item));
-
-            //if (vport == null)
-            //    return false;
-
-            //if (!this.Contains(vport))
-            //    return false;
-
-            //if (vport.IsReserved)
-            //    return false;
-
-            //if (this.references[vport.Name].Count != 0)
-            //    return false;
-
-            //vport.Owner = null;
-            //this.document.AddedObjects.Remove(vport.Handle);
-            //this.references.Remove(vport.Name);
-            //this.list.Remove(vport.Name);
-
-            //return true;
         }
 
         #endregion

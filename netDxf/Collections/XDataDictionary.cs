@@ -160,9 +160,11 @@ namespace netDxf.Collections
         public void Add(XData item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
-            XData xdata;
-            if (this.innerDictionary.TryGetValue(item.ApplicationRegistry.Name, out xdata))
+            }
+
+            if (this.innerDictionary.TryGetValue(item.ApplicationRegistry.Name, out XData xdata))
             {
                 xdata.XDataRecord.AddRange(item.XDataRecord);
             }
@@ -181,7 +183,9 @@ namespace netDxf.Collections
         public void AddRange(IEnumerable<XData> items)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
 
             foreach (XData data in items)
             {
@@ -197,7 +201,10 @@ namespace netDxf.Collections
         public bool Remove(string appId)
         {
             if (!this.innerDictionary.ContainsKey(appId))
+            {
                 return false;
+            }
+
             XData xdata = this.innerDictionary[appId];
             xdata.ApplicationRegistry.NameChanged -= this.ApplicationRegistry_NameChanged;
             this.innerDictionary.Remove(appId);
@@ -289,9 +296,7 @@ namespace netDxf.Collections
 
         bool ICollection<KeyValuePair<string, XData>>.Remove(KeyValuePair<string, XData> item)
         {
-            if (ReferenceEquals(item.Value, this.innerDictionary[item.Key]) && this.Remove(item.Key))
-                return true;
-            return false;
+            return ReferenceEquals(item.Value, this.innerDictionary[item.Key]) && this.Remove(item.Key);
         }
 
         bool ICollection<KeyValuePair<string, XData>>.Contains(KeyValuePair<string, XData> item)

@@ -159,68 +159,15 @@ namespace netDxf.IO
                 throw new DxfVersionNotSupportedException(string.Format("DXF file version not supported : {0}.", version), version);
             }
 
-            string dwgCodePage = CheckHeaderVariable(stream, HeaderVariableCode.DwgCodePage, out this.isBinary);
-            stream.Position = startPosition;
-
-            try
+            if (this.isBinary)
             {
-                if (this.isBinary)
-                {
-                    Encoding encoding;
-
-                    if (version >= DxfVersion.AutoCad2007)
-                    {
-                        encoding = Encoding.UTF8;
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(dwgCodePage))
-                        {
-                            encoding = Encoding.GetEncoding(Encoding.ASCII.WindowsCodePage); // use the default windows code page, if unable to read the code page header variable.
-                        }
-                        else
-                        {
-                            int codepage;
-                            encoding = Encoding.GetEncoding(int.TryParse(dwgCodePage.Split('_')[1], out codepage) ? codepage : Encoding.ASCII.WindowsCodePage);
-                        }
-                    }
-                    this.chunk = new BinaryCodeValueReader(new BinaryReader(stream), encoding);
-                }
-                else
-                {
-                    Encoding encoding;
-                    Encoding encodingType = EncodingType.GetType(stream);
-                    stream.Position = startPosition;
-
-                    bool isUnicode = encodingType.EncodingName == Encoding.UTF8.EncodingName ||
-                                     encodingType.EncodingName == Encoding.BigEndianUnicode.EncodingName ||
-                                     encodingType.EncodingName == Encoding.Unicode.EncodingName;
-
-                    if (isUnicode)
-                    {
-                        encoding = Encoding.UTF8;
-                    }
-                    else
-                    {
-                        // if the file is not UTF-8 use the code page provided by the DXF file
-                        if (string.IsNullOrEmpty(dwgCodePage))
-                        {
-                            encoding = Encoding.GetEncoding(Encoding.ASCII.WindowsCodePage); // use the default windows code page, if unable to read the code page header variable.
-                        }
-                        else
-                        {
-                            int codepage;
-                            encoding = Encoding.GetEncoding(!int.TryParse(dwgCodePage.Split('_')[1], out codepage) ? Encoding.ASCII.WindowsCodePage : codepage);
-                        }
-                    }
-                    this.chunk = new TextCodeValueReader(new StreamReader(stream, encoding, true));
-                }
+                this.chunk = new BinaryCodeValueReader(new BinaryReader(stream), version >= DxfVersion.AutoCad2007 ? Encoding.UTF8 : Encoding.ASCII);
             }
-            catch (Exception ex)
+            else
             {
-                throw new IOException("Unknown error opening the reader.", ex);
+                this.chunk = new TextCodeValueReader(new StreamReader(stream, version >= DxfVersion.AutoCad2007 ? Encoding.UTF8 : Encoding.ASCII, true));
             }
-
+            
             this.doc = new DxfDocument(new HeaderVariables(), false, supportFolders);
             this.shapeStyleCounter = 0;
 
@@ -340,7 +287,7 @@ namespace netDxf.IO
             // add default MLine style
             this.doc.MlineStyles.Add(MLineStyle.Default);
 
-            this.doc.ActiveLayout = Layout.ModelSpaceName;
+            this.doc.Entities.ActiveLayout = Layout.ModelSpaceName;
 
             return this.doc;
         }
@@ -10821,7 +10768,7 @@ namespace netDxf.IO
             // post process dimension style overrides,
             // it is stored in the dimension XData and the information stored there might contain handles to Linetypes, TextStyles and/or Blocks,
             // therefore is better process it at the end, when everything has been created read dimension style overrides
-            foreach (Dimension dim in this.doc.Dimensions)
+            foreach (Dimension dim in this.doc.Entities.Dimensions)
             {
                 XData xDataOverrides;
                 if (dim.XData.TryGetValue(ApplicationRegistry.DefaultName, out xDataOverrides))
@@ -10829,7 +10776,7 @@ namespace netDxf.IO
                     dim.StyleOverrides.AddRange(this.ReadDimensionStyleOverrideXData(xDataOverrides));
                 }
             }
-            foreach (Leader leader in this.doc.Leaders)
+            foreach (Leader leader in this.doc.Entities.Leaders)
             {
                 XData xDataOverrides;
                 if (leader.XData.TryGetValue(ApplicationRegistry.DefaultName, out xDataOverrides))

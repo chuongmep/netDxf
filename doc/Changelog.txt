@@ -1,5 +1,18 @@
 ## Change history
 
+
+### [2020/12/16]
+* Updated the project to use NET 5.0.
+* To declutter the DxfDocument, the entity operations such as adding, removing, or retiveing a specific list of entities (Lines, Circles,...) that where done directly through the drawing document have been moved to the Entities property of the DxfDocument.
+	These are no more than shortcuts to the real place where the entities are stored in a document, this is the drawing.Layouts[layoutName].AssociatedBlock.Entities.
+	The layout where the operations are performed is defined by the ActiveLayout.
+* Deleted the ImageDefinition constructors "public ImageDefinition(string file)" and "public ImageDefinition(string name, string file)" to avoid the use of the additional System.Drawing.Common.dll library. See CreateImageDefinition() sample.
+* Deleted the TextStyle method "public static string TrueTypeFontFamilyName(string ttfFont)" to avoid the use of the additional System.Drawing.Common.dll library.
+* The HeaderVariable DwgCodePage will not be used to load or save DXF files, prior to DxfVersion.AutoCad2007 ASCII encoding will be use and UTF8 for later.
+	It doesn't seems to play any role, open a new issue at GitHub if non-ASCII characters does not show up correctly.
+	This will avoid the use of additional libraries to handle the encoding code pages.
+
+
 ### [2.4.1 - 2020/12/06]
 * Added LayerStates accessible trough the Layers.StateManager. For more details see LayerStateManager() sample.
 * Added some workarounds for invalid values in buggy DXF files.

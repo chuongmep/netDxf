@@ -362,9 +362,14 @@ namespace netDxf.Entities
             public override EntityObject ConvertTo()
             {
                 if (MathHelper.IsEqual(MathHelper.NormalizeAngle(this.StartAngle), MathHelper.NormalizeAngle(this.EndAngle)))
+                {
                     return new Entities.Circle(this.Center, this.Radius);
+                }
+
                 if (this.IsCounterclockwise)
+                {
                     return new Entities.Arc(this.Center, this.Radius, this.StartAngle, this.EndAngle);
+                }
 
                 return new Entities.Arc(this.Center, this.Radius, 360 - this.EndAngle, 360 - this.StartAngle);
             }
@@ -770,12 +775,17 @@ namespace netDxf.Entities
         private void SetInternalInfo(IEnumerable<EntityObject> contourn, bool clearEdges)
         {
             bool containsPolyline = false;
-            if(clearEdges) this.edges.Clear();
+            if (clearEdges)
+            {
+                this.edges.Clear();
+            }
 
             foreach (EntityObject entity in contourn)
             {
                 if (containsPolyline)
+                {
                     throw new ArgumentException("Closed polylines cannot be combined with other entities to make a hatch boundary path.");
+                }
 
                 // it seems that AutoCad does not have problems on creating loops that theoretically does not make sense,
                 // like, for example, an internal loop that is made of a single arc.
@@ -799,7 +809,9 @@ namespace netDxf.Entities
                         if (lwpoly.IsClosed)
                         {
                             if (this.edges.Count != 0)
+                            {
                                 throw new ArgumentException("Closed polylines cannot be combined with other entities to make a hatch boundary path.");
+                            }
                             this.edges.Add(Polyline.ConvertFrom(entity));
                             this.pathType |= HatchBoundaryPathTypeFlags.Polyline;
                             containsPolyline = true;
@@ -812,7 +824,9 @@ namespace netDxf.Entities
                         if (poly.IsClosed)
                         {
                             if (this.edges.Count != 0)
+                            {
                                 throw new ArgumentException("Closed polylines cannot be combined with other entities to make a hatch boundary path.");
+                            }
                             this.edges.Add(Polyline.ConvertFrom(entity));
                             this.pathType |= HatchBoundaryPathTypeFlags.Polyline;
                             containsPolyline = true;

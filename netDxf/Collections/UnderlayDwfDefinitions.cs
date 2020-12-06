@@ -61,14 +61,19 @@ namespace netDxf.Collections
         internal override UnderlayDwfDefinition Add(UnderlayDwfDefinition underlayDwfDefinition, bool assignHandle)
         {
             if (underlayDwfDefinition == null)
+            {
                 throw new ArgumentNullException(nameof(underlayDwfDefinition));
+            }
 
-            UnderlayDwfDefinition add;
-            if (this.list.TryGetValue(underlayDwfDefinition.Name, out add))
+            if (this.list.TryGetValue(underlayDwfDefinition.Name, out UnderlayDwfDefinition add))
+            {
                 return add;
+            }
 
             if (assignHandle || string.IsNullOrEmpty(underlayDwfDefinition.Handle))
+            {
                 this.Owner.NumHandles = underlayDwfDefinition.AssignHandle(this.Owner.NumHandles);
+            }
 
             this.list.Add(underlayDwfDefinition.Name, underlayDwfDefinition);
             this.references.Add(underlayDwfDefinition.Name, new List<DxfObject>());
@@ -102,16 +107,24 @@ namespace netDxf.Collections
         public override bool Remove(UnderlayDwfDefinition item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             if (this.references[item.Name].Count != 0)
+            {
                 return false;
+            }
 
             this.Owner.AddedObjects.Remove(item.Handle);
             this.references.Remove(item.Name);
@@ -132,7 +145,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another DWF underlay definition with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (UnderlayDwfDefinition) sender);

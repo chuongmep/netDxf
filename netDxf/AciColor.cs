@@ -707,8 +707,7 @@ namespace netDxf
         /// <param name="hsl">A Vector3 containing the hue, saturation, and lightness components (output values range from 0 to 1).</param>
         public static void ToHsl(AciColor color, out Vector3 hsl)
         {
-            double h, s, l;
-            ToHsl(color, out h, out s, out l);
+            ToHsl(color, out double h, out double s, out double l);
             hsl = new Vector3(h, s, l);
         }
 
@@ -783,8 +782,7 @@ namespace netDxf
         /// </returns>
         public static Vector3 ToHsl(AciColor color)
         {
-            double h, s, l;
-            ToHsl(color, out h, out s, out l);
+            ToHsl(color, out double h, out double s, out double l);
             return new Vector3(h, s, l);
         }
 

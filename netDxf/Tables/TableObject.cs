@@ -136,12 +136,10 @@ namespace netDxf.Tables
 
         #region internal methods
 
-        /// <summary>
-        /// Hack to change the table name without having to check its name. Some invalid characters are used for internal purposes only.
-        /// </summary>
-        /// <param name="newName">Table object new name.</param>
         internal void SetName(string newName, bool checkName)
         {
+            // Hack to change the table name without having to check its name.
+            // Some invalid characters are used for internal purposes only.
             if (string.IsNullOrEmpty(newName))
             {
                 throw new ArgumentNullException(nameof(newName));

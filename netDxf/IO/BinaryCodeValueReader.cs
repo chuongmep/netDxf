@@ -335,8 +335,7 @@ namespace netDxf.IO
 
         private string ReadHex(string hex)
         {
-            long result;
-            if (long.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out result))
+            if (long.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long result))
             {
                 return result.ToString("X");
             }

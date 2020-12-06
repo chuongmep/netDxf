@@ -131,15 +131,26 @@ namespace netDxf.Collections
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
+
                 if (type != value.Type)
+                {
                     throw new ArgumentException(string.Format("The dictionary type: {0}, and the DimensionStyleOverride type: {1}, must be the same", type, value.Type));
+                }
 
                 DimensionStyleOverride remove = this.innerDictionary[type];
                 if (this.OnBeforeRemoveItemEvent(remove))
+                {
                     return;
+                }
+
                 if (this.OnBeforeAddItemEvent(value))
+                {
                     return;
+                }
+
                 this.innerDictionary[type] = value;
                 this.OnAddItemEvent(value);
                 this.OnRemoveItemEvent(remove);
@@ -200,9 +211,15 @@ namespace netDxf.Collections
         public void Add(DimensionStyleOverride item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             if (this.OnBeforeAddItemEvent(item))
+            {
                 throw new ArgumentException(string.Format("The DimensionStyleOverride {0} cannot be added to the collection.", item), nameof(item));
+            }
+
             this.innerDictionary.Add(item.Type, item);
             this.OnAddItemEvent(item);
         }
@@ -214,10 +231,15 @@ namespace netDxf.Collections
         public void AddRange(IEnumerable<DimensionStyleOverride> collection)
         {
             if (collection == null)
+            {
                 throw new ArgumentNullException(nameof(collection));
+            }
+
             // we will make room for so the collection will fit without having to resize the internal array during the Add method
             foreach (DimensionStyleOverride item in collection)
+            {
                 this.Add(item);
+            }
         }
 
         /// <summary>
@@ -227,11 +249,16 @@ namespace netDxf.Collections
         /// <returns>True if the <see cref="DimensionStyleOverride">DimensionStyleOverride</see> is successfully removed; otherwise, false.</returns>
         public bool Remove(DimensionStyleOverrideType type)
         {
-            DimensionStyleOverride remove;
-            if (!this.innerDictionary.TryGetValue(type, out remove))
+            if (!this.innerDictionary.TryGetValue(type, out DimensionStyleOverride remove))
+            {
                 return false;
+            }
+
             if (this.OnBeforeRemoveItemEvent(remove))
+            {
                 return false;
+            }
+
             this.innerDictionary.Remove(type);
             this.OnRemoveItemEvent(remove);
             return true;
@@ -322,7 +349,10 @@ namespace netDxf.Collections
         bool ICollection<KeyValuePair<DimensionStyleOverrideType, DimensionStyleOverride>>.Remove(KeyValuePair<DimensionStyleOverrideType, DimensionStyleOverride> item)
         {
             if (!ReferenceEquals(item.Value, this.innerDictionary[item.Key]))
+            {
                 return false;
+            }
+
             return this.Remove(item.Key);
         }
 

@@ -61,14 +61,19 @@ namespace netDxf.Collections
         internal override UnderlayPdfDefinition Add(UnderlayPdfDefinition underlayPdfDefinition, bool assignHandle)
         {
             if (underlayPdfDefinition == null)
+            {
                 throw new ArgumentNullException(nameof(underlayPdfDefinition));
+            }
 
-            UnderlayPdfDefinition add;
-            if (this.list.TryGetValue(underlayPdfDefinition.Name, out add))
+            if (this.list.TryGetValue(underlayPdfDefinition.Name, out UnderlayPdfDefinition add))
+            {
                 return add;
+            }
 
             if (assignHandle || string.IsNullOrEmpty(underlayPdfDefinition.Handle))
+            {
                 this.Owner.NumHandles = underlayPdfDefinition.AssignHandle(this.Owner.NumHandles);
+            }
 
             this.list.Add(underlayPdfDefinition.Name, underlayPdfDefinition);
             this.references.Add(underlayPdfDefinition.Name, new List<DxfObject>());
@@ -102,16 +107,24 @@ namespace netDxf.Collections
         public override bool Remove(UnderlayPdfDefinition item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             if (this.references[item.Name].Count != 0)
+            {
                 return false;
+            }
 
             this.Owner.AddedObjects.Remove(item.Handle);
             this.references.Remove(item.Name);
@@ -132,7 +145,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another PDF underlay definition with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (UnderlayPdfDefinition) sender);

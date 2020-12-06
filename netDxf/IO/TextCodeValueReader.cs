@@ -321,18 +321,17 @@ namespace netDxf.IO
             throw new Exception(string.Format("Code \"{0}\" not valid at line {1}", this.code, this.currentPosition));
         }
 
-        private byte ReadByte(string valueString)
-        {
-            byte result;
-            if (byte.TryParse(valueString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out result))
-            {
-                return result;
-            }
+        //private byte ReadByte(string valueString)
+        //{
+        //    if (byte.TryParse(valueString, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out byte result))
+        //    {
+        //        return result;
+        //    }
 
-            Debug.Assert(false, string.Format("Value \"{0}\" not valid at line {1}", valueString, this.currentPosition));
+        //    Debug.Assert(false, string.Format("Value \"{0}\" not valid at line {1}", valueString, this.currentPosition));
 
-            return 0;
-        }
+        //    return 0;
+        //}
 
         private byte[] ReadBytes(string valueString)
         {
@@ -340,8 +339,7 @@ namespace netDxf.IO
             for (int i = 0; i < valueString.Length; i++)
             {
                 string hex = string.Concat(valueString[i], valueString[++i]);
-                byte result;
-                if (byte.TryParse(hex, NumberStyles.AllowHexSpecifier | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out result))
+                if (byte.TryParse(hex, NumberStyles.AllowHexSpecifier | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.InvariantCulture, out byte result))
                 {
                     bytes.Add(result);
                 }

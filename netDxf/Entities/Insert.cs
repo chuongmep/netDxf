@@ -147,6 +147,7 @@ namespace netDxf.Entities
         /// </summary>
         /// <param name="block">Insert block definition.</param>
         /// <param name="position">Insert <see cref="Vector3">point</see> in world coordinates.</param>
+        /// <param name="scale">Insert scale.</param>
         public Insert(Block block, Vector3 position, double scale)
             : base(EntityType.Insert, DxfObjectCode.Insert)
         {
@@ -425,7 +426,9 @@ namespace netDxf.Entities
 
                 // entities with reactors are associated with other entities they will handle the transformation
                 if (entity.Reactors.Count > 0)
+                {
                     continue;
+                }
 
                 if(!isUniformScale)
                 {
@@ -595,7 +598,7 @@ namespace netDxf.Entities
                     Height = attribute.Height,
                     WidthFactor = attribute.WidthFactor,
                     ObliqueAngle = attribute.ObliqueAngle,
-                    Value = attribute.Value.ToString(),
+                    Value = attribute.Value,
                     Style = (TextStyle) attribute.Style.Clone(),
                     Position = attribute.Position,
                     Rotation = attribute.Rotation,

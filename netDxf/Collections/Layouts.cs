@@ -119,9 +119,7 @@ namespace netDxf.Collections
                 throw new ArgumentNullException(nameof(layout));
             }
 
-            Layout add;
-
-            if (this.list.TryGetValue(layout.Name, out add))
+            if (this.list.TryGetValue(layout.Name, out Layout add))
             {
                 return add;
             }
@@ -190,11 +188,20 @@ namespace netDxf.Collections
         /// <remarks>Reserved layouts or any other referenced by objects cannot be removed.</remarks>
         public override bool Remove(Layout item)
         {
-            if (item == null) return false;
+            if (item == null)
+            {
+                return false;
+            }
 
-            if (!this.Contains(item)) return false;
+            if (!this.Contains(item))
+            {
+                return false;
+            }
 
-            if (item.IsReserved) return false;
+            if (item.IsReserved)
+            {
+                return false;
+            }
 
             // remove the entities of the layout
             List<DxfObject> refObjects = this.GetReferences(item.Name);
@@ -204,7 +211,7 @@ namespace netDxf.Collections
                 refObjects.CopyTo(entities);
                 foreach (DxfObject e in entities)
                 {
-                    this.Owner.RemoveEntity(e as EntityObject);
+                    this.Owner.Entities.Remove(e as EntityObject);
                 }
             }
 
@@ -239,8 +246,7 @@ namespace netDxf.Collections
                 if (l.IsPaperSpace)
                 {
                     string blockName = l.AssociatedBlock.Name.Remove(0, Block.PaperSpace.Name.Length);
-                    int index;
-                    if (int.TryParse(blockName, out index))
+                    if (int.TryParse(blockName, out int index))
                     {
                         names.Add(index);
                     }

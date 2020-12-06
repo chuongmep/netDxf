@@ -131,19 +131,31 @@ namespace netDxf.Collections
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
+
                 if (!string.Equals(tag, value.Tag, StringComparison.OrdinalIgnoreCase))
+                {
                     throw new ArgumentException(string.Format("The dictionary tag: {0}, and the attribute definition tag: {1}, must be the same", tag, value.Tag));
+                }
 
                 // there is no need to add the same object, it might cause overflow issues
                 if (ReferenceEquals(this.innerDictionary[tag], value))
+                {
                     return;
+                }
 
                 AttributeDefinition remove = this.innerDictionary[tag];
                 if (this.OnBeforeRemoveItemEvent(remove))
+                {
                     return;
+                }
+
                 if (this.OnBeforeAddItemEvent(value))
+                {
                     return;
+                }
                 this.innerDictionary[tag] = value;
                 this.OnAddItemEvent(value);
                 this.OnRemoveItemEvent(remove);
@@ -193,9 +205,15 @@ namespace netDxf.Collections
         public void Add(AttributeDefinition item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             if (this.OnBeforeAddItemEvent(item))
+            {
                 throw new ArgumentException("The attribute definition cannot be added to the collection.", nameof(item));
+            }
+
             this.innerDictionary.Add(item.Tag, item);
             this.OnAddItemEvent(item);
         }
@@ -207,10 +225,15 @@ namespace netDxf.Collections
         public void AddRange(IEnumerable<AttributeDefinition> collection)
         {
             if (collection == null)
+            {
                 throw new ArgumentNullException(nameof(collection));
+            }
+
             // we will make room for so the collection will fit without having to resize the internal array during the Add method
             foreach (AttributeDefinition item in collection)
+            {
                 this.Add(item);
+            }
         }
 
         /// <summary>
@@ -220,11 +243,16 @@ namespace netDxf.Collections
         /// <returns>True if the <see cref="AttributeDefinition">attribute definition</see> is successfully removed; otherwise, false.</returns>
         public bool Remove(string tag)
         {
-            AttributeDefinition remove;
-            if (!this.innerDictionary.TryGetValue(tag, out remove))
+            if (!this.innerDictionary.TryGetValue(tag, out AttributeDefinition remove))
+            {
                 return false;
+            }
+
             if (this.OnBeforeRemoveItemEvent(remove))
+            {
                 return false;
+            }
+
             this.innerDictionary.Remove(tag);
             this.OnRemoveItemEvent(remove);
             return true;
@@ -315,7 +343,9 @@ namespace netDxf.Collections
         bool ICollection<KeyValuePair<string, AttributeDefinition>>.Remove(KeyValuePair<string, AttributeDefinition> item)
         {
             if (!ReferenceEquals(item.Value, this.innerDictionary[item.Key]))
+            {
                 return false;
+            }
             return this.Remove(item.Key);
         }
 

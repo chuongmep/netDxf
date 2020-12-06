@@ -112,8 +112,7 @@ namespace netDxf
                         throw new ArgumentException("The value of a XDataCode.DatabaseHandle must be an hexadecimal number.", nameof(value));
                     }
 
-                    long test;
-                    if (!long.TryParse(handle, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out test))
+                    if (!long.TryParse(handle, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long _))
                     {
                         throw new ArgumentException("The value of a XDataCode.DatabaseHandle must be an hexadecimal number.", nameof(value));
                     }

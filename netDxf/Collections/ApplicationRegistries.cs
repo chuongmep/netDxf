@@ -60,14 +60,19 @@ namespace netDxf.Collections
         internal override ApplicationRegistry Add(ApplicationRegistry appReg, bool assignHandle)
         {
             if (appReg == null)
+            {
                 throw new ArgumentNullException(nameof(appReg));
+            }
 
-            ApplicationRegistry add;
-            if (this.list.TryGetValue(appReg.Name, out add))
+            if (this.list.TryGetValue(appReg.Name, out ApplicationRegistry add))
+            {
                 return add;
+            }
 
             if (assignHandle || string.IsNullOrEmpty(appReg.Handle))
+            {
                 this.Owner.NumHandles = appReg.AssignHandle(this.Owner.NumHandles);
+            }
 
             this.list.Add(appReg.Name, appReg);
             this.references.Add(appReg.Name, new List<DxfObject>());
@@ -101,16 +106,24 @@ namespace netDxf.Collections
         public override bool Remove(ApplicationRegistry item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             if (this.references[item.Name].Count != 0)
+            {
                 return false;
+            }
 
             this.Owner.AddedObjects.Remove(item.Handle);
             this.references.Remove(item.Name);
@@ -131,7 +144,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another application registry with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (ApplicationRegistry) sender);

@@ -426,8 +426,8 @@ namespace netDxf.Entities
         /// </remarks>
         public Vector2 Hook
         {
-            get { return this.vertexes[this.vertexes.Count - 1]; }
-            set { this.vertexes[this.vertexes.Count - 1] = value; }
+            get { return this.vertexes[^1]; }
+            set { this.vertexes[^1] = value; }
         }
 
         /// <summary>
@@ -529,7 +529,7 @@ namespace netDxf.Entities
             if (this.hasHookline)
             {
                 Vector2 vertex = this.CalculateHookLine();
-                this.vertexes[this.vertexes.Count - 2] = vertex;
+                this.vertexes[^2] = vertex;
             }
         }
 
@@ -590,7 +590,7 @@ namespace netDxf.Entities
                 case EntityType.MText:
                     MText mText = (MText) this.annotation;
                     ocsHook = MathHelper.Transform(mText.Position, this.Normal, CoordinateSystem.World, CoordinateSystem.Object);
-                    int mTextSide = Math.Sign(ocsHook.X - this.vertexes[this.vertexes.Count - 2].X);
+                    int mTextSide = Math.Sign(ocsHook.X - this.vertexes[^2].X);
 
                     if (textVerticalPlacement == DimensionStyleTextVerticalPlacement.Centered)
                     {
@@ -606,13 +606,13 @@ namespace netDxf.Entities
                             mText.AttachmentPoint = MTextAttachmentPoint.MiddleRight;
                             xOffset = textOffset * dimScale;
                         }
-                        this.vertexes[this.vertexes.Count - 1] = new Vector2(ocsHook.X + xOffset, ocsHook.Y) - this.offset;
+                        this.vertexes[^1] = new Vector2(ocsHook.X + xOffset, ocsHook.Y) - this.offset;
                     }
                     else
                     {
                         ocsHook -= new Vector3(mTextSide* textOffset * dimScale, textOffset * dimScale, 0.0);
                         mText.AttachmentPoint = mTextSide >= 0 ? MTextAttachmentPoint.BottomLeft : MTextAttachmentPoint.BottomRight;
-                        this.vertexes[this.vertexes.Count - 1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
+                        this.vertexes[^1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
                     }
                     mText.Height = textHeight * dimScale;
                     mText.Color = textColor.IsByBlock ? AciColor.ByLayer : textColor;
@@ -621,21 +621,21 @@ namespace netDxf.Entities
                 case EntityType.Insert:
                     Insert ins = (Insert) this.annotation;
                     ocsHook = MathHelper.Transform(ins.Position, this.Normal, CoordinateSystem.World, CoordinateSystem.Object);
-                    this.vertexes[this.vertexes.Count - 1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
+                    this.vertexes[^1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
                     ins.Color = textColor.IsByBlock ? AciColor.ByLayer : textColor;
                     break;
 
                 case EntityType.Tolerance:
                     Tolerance tol = (Tolerance) this.annotation;
                     ocsHook = MathHelper.Transform(tol.Position, this.Normal, CoordinateSystem.World, CoordinateSystem.Object);
-                    this.vertexes[this.vertexes.Count - 1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
+                    this.vertexes[^1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
                     tol.Color = textColor.IsByBlock ? AciColor.ByLayer : textColor;
                     break;
 
                 case EntityType.Text:
                     Text text = (Text) this.annotation;
                     ocsHook = MathHelper.Transform(text.Position, this.Normal, CoordinateSystem.World, CoordinateSystem.Object);
-                    int textSide = Math.Sign(ocsHook.X - this.vertexes[this.vertexes.Count - 2].X);
+                    int textSide = Math.Sign(ocsHook.X - this.vertexes[^2].X);
                     if (textVerticalPlacement == DimensionStyleTextVerticalPlacement.Centered)
                     {
                         double xOffset;
@@ -650,13 +650,13 @@ namespace netDxf.Entities
                             text.Alignment = TextAlignment.MiddleRight;
                             xOffset = textOffset * dimScale;
                         }
-                        this.vertexes[this.vertexes.Count - 1] = new Vector2(ocsHook.X + xOffset, ocsHook.Y) - this.offset;
+                        this.vertexes[^1] = new Vector2(ocsHook.X + xOffset, ocsHook.Y) - this.offset;
                     }
                     else
                     {
                         ocsHook -= new Vector3(textSide * textOffset * dimScale, textOffset * dimScale, 0.0);
                         text.Alignment = textSide >= 0 ? TextAlignment.BottomLeft : TextAlignment.BottomRight;
-                        this.vertexes[this.vertexes.Count - 1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
+                        this.vertexes[^1] = new Vector2(ocsHook.X, ocsHook.Y) - this.offset;
                     }
                     text.Height = textHeight * dimScale;
                     text.Color = textColor.IsByBlock ? AciColor.ByLayer : textColor;
@@ -713,13 +713,13 @@ namespace netDxf.Entities
                 textColor = (AciColor)styleOverride.Value;
             }
 
-            Vector2 hook = this.vertexes[this.vertexes.Count - 1];
+            Vector2 hook = this.vertexes[^1];
             Vector2 position;
             switch (this.annotation.Type)
             {
                 case EntityType.MText:
                     MText mText = (MText) this.annotation;
-                    Vector2 mTextDir = this.vertexes[this.vertexes.Count - 1] - this.vertexes[this.vertexes.Count - 2];
+                    Vector2 mTextDir = this.vertexes[^1] - this.vertexes[^2];
                     double mTextXOffset = 0.0;
                     int mTextSide = Math.Sign(mTextDir.X);
                     if (textVerticalPlacement == DimensionStyleTextVerticalPlacement.Centered)
@@ -751,7 +751,7 @@ namespace netDxf.Entities
                 case EntityType.Text:
                     Text text = (Text) this.annotation;
                     double textXoffset = 0.0;
-                    Vector2 textDir = this.vertexes[this.vertexes.Count - 1] - this.vertexes[this.vertexes.Count - 2];
+                    Vector2 textDir = this.vertexes[^1] - this.vertexes[^2];
                     int textSide = Math.Sign(textDir.X);
 
                     if (textVerticalPlacement == DimensionStyleTextVerticalPlacement.Centered)
@@ -801,8 +801,8 @@ namespace netDxf.Entities
 
         private MText BuildAnnotation(string text)
         {
-            Vector2 hook = this.vertexes[this.vertexes.Count - 1];
-            Vector2 dir = this.vertexes[this.vertexes.Count - 1] - this.vertexes[this.vertexes.Count - 2];
+            Vector2 hook = this.vertexes[^1];
+            Vector2 dir = this.vertexes[^1] - this.vertexes[^2];
             int side = Math.Sign(dir.X);
 
             Vector2 position;
@@ -841,7 +841,7 @@ namespace netDxf.Entities
 
         private Insert BuildAnnotation(Block block)
         {
-            return new Insert(block, this.vertexes[this.vertexes.Count - 1])
+            return new Insert(block, this.vertexes[^1])
             {
                 Color = this.style.TextColor.IsByBlock ? AciColor.ByLayer : this.style.TextColor
             };
@@ -849,7 +849,7 @@ namespace netDxf.Entities
 
         private Tolerance BuildAnnotation(ToleranceEntry tolerance)
         {
-            return new Tolerance(tolerance, this.vertexes[this.vertexes.Count - 1])
+            return new Tolerance(tolerance, this.vertexes[^1])
             {
                 Color = this.style.TextColor.IsByBlock ? AciColor.ByLayer : this.style.TextColor,
                 Style = this.style
@@ -877,7 +877,7 @@ namespace netDxf.Entities
                 arrowSize = (double)styleOverride.Value;
             }
 
-            Vector2 v = this.Vertexes[this.Vertexes.Count - 1] - this.Vertexes[this.Vertexes.Count - 2];
+            Vector2 v = this.Vertexes[^1] - this.Vertexes[^2];
 
             Vector2 dir = v.X >= 0 ? Vector2.UnitX : -Vector2.UnitX;
 

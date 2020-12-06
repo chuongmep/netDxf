@@ -211,8 +211,7 @@ namespace netDxf.Collections
                 throw new ArgumentNullException(nameof(layerState));
             }
 
-            LayerState add;
-            if (this.list.TryGetValue(layerState.Name, out add))
+            if (this.list.TryGetValue(layerState.Name, out LayerState add))
             {
                 return add;
             }

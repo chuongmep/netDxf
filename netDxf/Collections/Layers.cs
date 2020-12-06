@@ -83,8 +83,7 @@ namespace netDxf.Collections
                 throw new ArgumentNullException(nameof(layer));
             }
 
-            Layer add;
-            if (this.list.TryGetValue(layer.Name, out add))
+            if (this.list.TryGetValue(layer.Name, out Layer add))
             {
                 return add;
             }

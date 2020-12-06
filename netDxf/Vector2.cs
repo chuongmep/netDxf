@@ -732,9 +732,9 @@ namespace netDxf
         /// <returns>True if obj and this instance are the same type and represent the same value; otherwise, false.</returns>
         public override bool Equals(object other)
         {
-            if (other is Vector2)
+            if (other is Vector2 vector)
             {
-                return this.Equals((Vector2) other);
+                return this.Equals(vector);
             }
             return false;
         }

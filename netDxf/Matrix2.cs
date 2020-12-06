@@ -589,9 +589,9 @@ namespace netDxf
         /// <returns>True if obj and this instance are the same type and represent the same value; otherwise, false.</returns>
         public override bool Equals(object obj)
         {
-            if (obj is Matrix2)
+            if (obj is Matrix2 matrix)
             {
-                return this.Equals((Matrix2) obj);
+                return this.Equals(matrix);
             }
 
             return false;

@@ -59,7 +59,7 @@ namespace netDxf.Entities
         public ToleranceValue(bool showDiameterSymbol, string value, ToleranceMaterialCondition materialCondition)
         {
             this.showDiameterSymbol = showDiameterSymbol;
-            this.tolerance = value;
+            this.tolerance = string.IsNullOrEmpty(value) ? string.Empty : value;
             this.materialCondition = materialCondition;
         }
 
@@ -82,7 +82,7 @@ namespace netDxf.Entities
         public string Value
         {
             get { return this.tolerance; }
-            set { this.tolerance = value; }
+            set { this.tolerance = string.IsNullOrEmpty(value) ? string.Empty : value; ; }
         }
 
         /// <summary>

@@ -72,14 +72,18 @@ namespace netDxf.Entities
             : base(DimensionType.Radius)
         {
             if (arc == null)
+            {
                 throw new ArgumentNullException(nameof(arc));
+            }
 
             Vector3 ocsCenter = MathHelper.Transform(arc.Center, arc.Normal, CoordinateSystem.World, CoordinateSystem.Object);
             this.center = new Vector2(ocsCenter.X, ocsCenter.Y);
             this.refPoint = Vector2.Polar(this.center, arc.Radius, rotation*MathHelper.DegToRad);
 
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
             this.Normal = arc.Normal;
             this.Elevation = ocsCenter.Z;
@@ -108,14 +112,18 @@ namespace netDxf.Entities
             : base(DimensionType.Radius)
         {
             if (circle == null)
+            {
                 throw new ArgumentNullException(nameof(circle));
+            }
 
             Vector3 ocsCenter = MathHelper.Transform(circle.Center, circle.Normal, CoordinateSystem.World, CoordinateSystem.Object);
             this.center = new Vector2(ocsCenter.X, ocsCenter.Y);
             this.refPoint = Vector2.Polar(this.center, circle.Radius, rotation*MathHelper.DegToRad);
 
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
             this.Normal = circle.Normal;
             this.Elevation = ocsCenter.Z;
@@ -143,13 +151,17 @@ namespace netDxf.Entities
         public RadialDimension(Vector2 centerPoint, Vector2 referencePoint, DimensionStyle style)
             : base(DimensionType.Radius)
         {
-            if(Vector2.Equals(centerPoint, referencePoint))
+            if (Vector2.Equals(centerPoint, referencePoint))
+            {
                 throw new ArgumentException("The center and the reference point cannot be the same");
+            }
             this.center = centerPoint;
             this.refPoint = referencePoint;
 
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
 
             this.Update();
@@ -242,7 +254,10 @@ namespace netDxf.Entities
         public override void TransformBy(Matrix3 transformation, Vector3 translation)
         {
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();
@@ -281,9 +296,11 @@ namespace netDxf.Entities
         }
 
         protected override void CalculateReferencePoints()
-        {            
-            if(Vector2.Equals(this.center, this.refPoint))
+        {
+            if (Vector2.Equals(this.center, this.refPoint))
+            {
                 throw new ArgumentException("The center and the reference point cannot be the same");
+            }
 
             this.defPoint = this.center;
 
@@ -362,13 +379,14 @@ namespace netDxf.Entities
 
             foreach (DimensionStyleOverride styleOverride in this.StyleOverrides.Values)
             {
-                ICloneable value = styleOverride.Value as ICloneable;
-                object copy = value != null ? value.Clone() : styleOverride.Value;
+                object copy = styleOverride.Value is ICloneable value ? value.Clone() : styleOverride.Value;
                 entity.StyleOverrides.Add(new DimensionStyleOverride(styleOverride.Type, copy));
             }
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

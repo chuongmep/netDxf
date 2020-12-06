@@ -133,7 +133,7 @@ namespace netDxf.Entities
             this.block = null;
             this.style = DimensionStyle.Default;
             this.textRotation = 0.0;
-            this.userText = null;
+            this.userText = string.Empty;
             this.elevation = 0.0;
             this.styleOverrides = new DimensionStyleOverrideDictionary();
             this.styleOverrides.BeforeAddItem += this.StyleOverrides_BeforeAddItem;
@@ -196,7 +196,9 @@ namespace netDxf.Entities
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
                 this.style = this.OnDimensionStyleChangedEvent(this.style, value);
             }
         }
@@ -253,7 +255,9 @@ namespace netDxf.Entities
             set
             {
                 if (value < 0.25 || value > 4.0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The line spacing factor valid values range from 0.25 to 4.00");
+                }
                 this.lineSpacing = value;
             }
         }
@@ -294,7 +298,7 @@ namespace netDxf.Entities
         public string UserText
         {
             get { return this.userText; }
-            set { this.userText = value; }
+            set { this.userText = string.IsNullOrEmpty(value) ? string.Empty : value; }
         }
 
         /// <summary>
@@ -349,10 +353,13 @@ namespace netDxf.Entities
 
         private void StyleOverrides_BeforeAddItem(DimensionStyleOverrideDictionary sender, DimensionStyleOverrideDictionaryEventArgs e)
         {
-            DimensionStyleOverride old;
-            if (sender.TryGetValue(e.Item.Type, out old))
+            if (sender.TryGetValue(e.Item.Type, out DimensionStyleOverride old))
+            {
                 if (ReferenceEquals(old.Value, e.Item.Value))
+                {
                     e.Cancel = true;
+                }
+            }
         }
 
         private void StyleOverrides_AddItem(DimensionStyleOverrideDictionary sender, DimensionStyleOverrideDictionaryEventArgs e)

@@ -72,7 +72,9 @@ namespace netDxf.Entities
             : base(DimensionType.Angular3Point)
         {
             if (arc == null)
+            {
                 throw new ArgumentNullException(nameof(arc));
+            }
 
             Vector3 refPoint = MathHelper.Transform(arc.Center, arc.Normal, CoordinateSystem.World, CoordinateSystem.Object);
             this.center = new Vector2(refPoint.X, refPoint.Y);
@@ -80,11 +82,15 @@ namespace netDxf.Entities
             this.end = Vector2.Polar(this.center, arc.Radius, arc.EndAngle*MathHelper.DegToRad);
 
             if (offset < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset), "The offset value must be equal or greater than zero.");
+            }
             this.offset = offset;
 
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
             this.Normal = arc.Normal;
             this.Elevation = refPoint.Z;
@@ -117,15 +123,21 @@ namespace netDxf.Entities
             Vector2 dir1 = startPoint - centerPoint;
             Vector2 dir2 = endPoint - centerPoint;
             if (Vector2.AreParallel(dir1, dir2))
+            {
                 throw new ArgumentException("The two lines that define the dimension are parallel.");
+            }
             this.center = centerPoint;
             this.start = startPoint;
             this.end = endPoint;
             if (offset < 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(offset), "The offset value must be equal or greater than zero.");
+            }
             this.offset = offset;
             if (style == null)
+            {
                 throw new ArgumentNullException(nameof(style));
+            }
             this.Style = style;
             this.Update();
         }
@@ -181,7 +193,9 @@ namespace netDxf.Entities
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), "The offset value must be equal or greater than zero.");
+                }
                 this.offset = value;
             }
         }
@@ -261,12 +275,12 @@ namespace netDxf.Entities
                 double textGap = this.Style.TextOffset;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.TextOffset, out styleOverride))
                 {
-                    textGap = (double)styleOverride.Value;
+                    textGap = (double) styleOverride.Value;
                 }
                 double scale = this.Style.DimScaleOverall;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.DimScaleOverall, out styleOverride))
                 {
-                    scale = (double)styleOverride.Value;
+                    scale = (double) styleOverride.Value;
                 }
 
                 double gap = textGap * scale;
@@ -350,7 +364,9 @@ namespace netDxf.Entities
             Vector2 dir1 = this.start - this.center;
             Vector2 dir2 = this.end - this.center;
             if (Vector2.AreParallel(dir1, dir2))
+            {
                 throw new ArgumentException("The two lines that define the dimension are parallel.");
+            }
 
             DimensionStyleOverride styleOverride;
 
@@ -439,14 +455,14 @@ namespace netDxf.Entities
 
             foreach (DimensionStyleOverride styleOverride in this.StyleOverrides.Values)
             {
-                ICloneable value = styleOverride.Value as ICloneable;
-                object copy = value != null ? value.Clone() : styleOverride.Value;
-
+                object copy = styleOverride.Value is ICloneable value ? value.Clone() : styleOverride.Value;
                 entity.StyleOverrides.Add(new DimensionStyleOverride(styleOverride.Type, copy));
             }
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

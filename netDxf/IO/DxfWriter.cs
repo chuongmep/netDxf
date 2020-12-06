@@ -174,7 +174,10 @@ namespace netDxf.IO
             namedObjectDictionary.Entries.Add(this.doc.RasterVariables.Handle, DxfObjectCode.ImageVarsDictionary);
 
             // Layer states dictionary
-            DictionaryObject layerStatesDictionary = new DictionaryObject(this.doc.Layers) {Handle = this.doc.Layers.StateManager.Handle};
+            DictionaryObject layerStatesDictionary = new DictionaryObject(this.doc.Layers)
+            {
+                Handle = this.doc.Layers.StateManager.Handle
+            };
             dictionaries.Add(layerStatesDictionary);
 
             DictionaryObject layerStates = new DictionaryObject(layerStatesDictionary);
@@ -188,11 +191,15 @@ namespace netDxf.IO
 
             this.doc.DrawingVariables.HandleSeed = this.doc.NumHandles.ToString("X");
 
-            this.Open(stream, this.doc.DrawingVariables.AcadVer < DxfVersion.AutoCad2007 ? Encoding.ASCII : null);
-
-            // The comment group, 999, is not used in binary DXF files.
-            if (!this.isBinary)
+            if (this.isBinary)
             {
+                this.chunk = new BinaryCodeValueWriter(new BinaryWriter(stream, new UTF8Encoding(false)));
+            }
+            else
+            {
+                this.chunk = new TextCodeValueWriter(new StreamWriter(stream, new UTF8Encoding(false)));
+
+                // The comment group, 999, is not used in binary DXF files.
                 foreach (string comment in this.doc.Comments)
                 {
                     this.WriteComment(comment);
@@ -207,8 +214,7 @@ namespace netDxf.IO
             }
 
             // writing a copy of the active dimension style variables in the header section will avoid to be displayed as <style overrides> in AutoCAD
-            DimensionStyle activeDimStyle;
-            if (this.doc.DimensionStyles.TryGetValue(this.doc.DrawingVariables.DimStyle, out activeDimStyle))
+            if (this.doc.DimensionStyles.TryGetValue(this.doc.DrawingVariables.DimStyle, out DimensionStyle activeDimStyle))
             {
                 this.WriteActiveDimensionStyleSystemVariables(activeDimStyle);
             }
@@ -249,8 +255,8 @@ namespace netDxf.IO
             if (this.doc.ImageDefinitions.Items.Count > 0)
             {
                 this.WriteImageDefClass(this.doc.ImageDefinitions.Count);
-                this.WriteImageDefRectorClass(this.doc.Images.Count());
-                this.WriteImageClass(this.doc.Images.Count());
+                this.WriteImageDefRectorClass(this.doc.Entities.Images.Count());
+                this.WriteImageClass(this.doc.Entities.Images.Count());
             }
             this.EndSection();
 
@@ -447,22 +453,7 @@ namespace netDxf.IO
         #endregion
 
         #region private methods
-
-        /// <summary>
-        /// Open the DXF writer.
-        /// </summary>
-        private void Open(Stream stream, Encoding encoding)
-        {
-            if (this.isBinary)
-            {
-                this.chunk = new BinaryCodeValueWriter(encoding == null ? new BinaryWriter(stream, new UTF8Encoding(false)) : new BinaryWriter(stream, encoding));
-            }
-            else
-            {
-                this.chunk = new TextCodeValueWriter(encoding == null ? new StreamWriter(stream, new UTF8Encoding(false)) : new StreamWriter(stream, encoding));
-            }
-        }
-
+        
         /// <summary>
         /// Closes the DXF writer.
         /// </summary>

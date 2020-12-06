@@ -433,7 +433,7 @@ namespace netDxf.Blocks
             // When a Block is created form a DxfDocument or DXF file, any Hatch entity that it may contain will have its associative property set to false.
             // This will avoid problems when the same entity its associated to multiple hatches,
             // or when any of any of its paths is defined by the intersection of several entities.
-            foreach (Hatch hatch in doc.Hatches)
+            foreach (Hatch hatch in doc.Entities.Hatches)
             {
                 hatch.UnLinkBoundary();
             }
@@ -565,12 +565,10 @@ namespace netDxf.Blocks
 
         #region internal methods
 
-        /// <summary>
-        /// Hack to change the table name without having to check its name. Some invalid characters are used for internal purposes only.
-        /// </summary>
-        /// <param name="newName">Table object new name.</param>
         internal new void SetName(string newName, bool checkName)
         {
+            // Hack to change the table name without having to check its name.
+            // Some invalid characters are used for internal purposes only.
             base.SetName(newName, checkName);
             this.Record.Name = newName;
             this.forInternalUse = newName.StartsWith("*");

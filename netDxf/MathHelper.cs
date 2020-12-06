@@ -120,9 +120,8 @@ namespace netDxf
         /// <summary>
         /// Returns a value indicating the sign of a double-precision floating-point number.
         /// </summary>
-        /// <param name="number">Double precision number.
+        /// <param name="number">Double precision number.</param>
         /// <param name="threshold">Tolerance.</param>
-        /// </param>
         /// <returns>
         /// A number that indicates the sign of value.
         /// Return value, meaning:<br />

@@ -63,18 +63,25 @@ namespace netDxf.Collections
         internal override Group Add(Group group, bool assignHandle)
         {
             if (group == null)
+            {
                 throw new ArgumentNullException(nameof(group));
+            }
 
             // if no name has been given to the group a generic name will be created
             if (group.IsUnnamed && string.IsNullOrEmpty(group.Name))
+            {
                 group.SetName("*A" + this.Owner.GroupNamesIndex++, false);
+            }
 
-            Group add;
-            if (this.list.TryGetValue(group.Name, out add))
+            if (this.list.TryGetValue(group.Name, out Group add))
+            {
                 return add;
+            }
 
             if (assignHandle || string.IsNullOrEmpty(group.Handle))
+            {
                 this.Owner.NumHandles = group.AssignHandle(this.Owner.NumHandles);
+            }
 
             this.list.Add(group.Name, group);
             this.references.Add(group.Name, new List<DxfObject>());
@@ -84,12 +91,14 @@ namespace netDxf.Collections
                 {
                     // the group and its entities must belong to the same document
                     if (!ReferenceEquals(entity.Owner.Owner.Owner.Owner, this.Owner))
+                    {
                         throw new ArgumentException("The group and their entities must belong to the same document. Clone them instead.");
+                    }
                 }
                 else
                 {
                     // only entities not owned by anyone need to be added
-                    this.Owner.AddEntity(entity);
+                    this.Owner.Entities.Add(entity);
                 }
                 this.references[group.Name].Add(entity);
             }
@@ -125,13 +134,19 @@ namespace netDxf.Collections
         public override bool Remove(Group item)
         {
             if (item == null)
+            {
                 return false;
+            }
 
             if (!this.Contains(item))
+            {
                 return false;
+            }
 
             if (item.IsReserved)
+            {
                 return false;
+            }
 
             foreach (EntityObject entity in item.Entities)
             {
@@ -159,7 +174,9 @@ namespace netDxf.Collections
         private void Item_NameChanged(TableObject sender, TableObjectChangedEventArgs<string> e)
         {
             if (this.Contains(e.NewValue))
+            {
                 throw new ArgumentException("There is already another dimension style with the same name.");
+            }
 
             this.list.Remove(sender.Name);
             this.list.Add(e.NewValue, (Group) sender);
@@ -175,12 +192,14 @@ namespace netDxf.Collections
             {
                 // the group and its entities must belong to the same document
                 if (!ReferenceEquals(e.Item.Owner.Owner.Owner.Owner, this.Owner))
+                {
                     throw new ArgumentException("The group and the entity must belong to the same document. Clone it instead.");
+                }
             }
             else
             {
                 // only entities not owned by anyone will be added
-                this.Owner.AddEntity(e.Item);
+                this.Owner.Entities.Add(e.Item);
             }
 
             this.references[sender.Name].Add(e.Item);

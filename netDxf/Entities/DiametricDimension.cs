@@ -207,17 +207,17 @@ namespace netDxf.Entities
                 double textGap = this.Style.TextOffset;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.TextOffset, out styleOverride))
                 {
-                    textGap = (double)styleOverride.Value;
+                    textGap = (double) styleOverride.Value;
                 }
                 double scale = this.Style.DimScaleOverall;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.DimScaleOverall, out styleOverride))
                 {
-                    scale = (double)styleOverride.Value;
+                    scale = (double) styleOverride.Value;
                 }
                 double arrowSize = this.Style.ArrowSize;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.ArrowSize, out styleOverride))
                 {
-                    arrowSize = (double)styleOverride.Value;
+                    arrowSize = (double) styleOverride.Value;
                 }
 
                 Vector2 vec = Vector2.Normalize(this.refPoint - this.center);
@@ -243,7 +243,10 @@ namespace netDxf.Entities
         public override void TransformBy(Matrix3 transformation, Vector3 translation)
         {
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             Matrix3 transWO = MathHelper.ArbitraryAxis(newNormal).Transpose();
@@ -286,8 +289,10 @@ namespace netDxf.Entities
         /// </summary>
         protected override void CalculateReferencePoints()
         {
-            if(Vector2.Equals(this.center, this.refPoint))
+            if (Vector2.Equals(this.center, this.refPoint))
+            {
                 throw new ArgumentException("The center and the reference point cannot be the same");
+            }
 
             double measure = this.Measurement;
             Vector2 centerRef = this.center;
@@ -308,17 +313,17 @@ namespace netDxf.Entities
                 double textGap = this.Style.TextOffset;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.TextOffset, out styleOverride))
                 {
-                    textGap = (double)styleOverride.Value;
+                    textGap = (double) styleOverride.Value;
                 }
                 double scale = this.Style.DimScaleOverall;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.DimScaleOverall, out styleOverride))
                 {
-                    scale = (double)styleOverride.Value;
+                    scale = (double) styleOverride.Value;
                 }
                 double arrowSize = this.Style.ArrowSize;
                 if (this.StyleOverrides.TryGetValue(DimensionStyleOverrideType.ArrowSize, out styleOverride))
                 {
-                    arrowSize = (double)styleOverride.Value;
+                    arrowSize = (double) styleOverride.Value;
                 }
 
                 Vector2 vec = Vector2.Normalize(this.refPoint - this.center);
@@ -372,14 +377,14 @@ namespace netDxf.Entities
 
             foreach (DimensionStyleOverride styleOverride in this.StyleOverrides.Values)
             {
-                ICloneable value = styleOverride.Value as ICloneable;
-                object copy = value != null ? value.Clone() : styleOverride.Value;
-
+                object copy = styleOverride.Value is ICloneable value ? value.Clone() : styleOverride.Value;
                 entity.StyleOverrides.Add(new DimensionStyleOverride(styleOverride.Type, copy));
             }
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }

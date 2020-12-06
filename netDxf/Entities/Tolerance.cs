@@ -152,7 +152,9 @@ namespace netDxf.Entities
             set
             {
                 if (value <= 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The tolerance text height must be greater than zero.");
+                }
                 this.textHeight = value;
             }
         }
@@ -201,7 +203,9 @@ namespace netDxf.Entities
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
                 this.style = this.OnDimensionStyleChangedEvent(this.style, value);
             }
         }
@@ -564,7 +568,9 @@ namespace netDxf.Entities
                         if (chars.MoveNext())
                         {
                             if (chars.Current == '}')
+                            {
                                 return s;
+                            }
 
                             throw new FormatException("The tolerance string representation is not well formatted");
                         }
@@ -656,7 +662,9 @@ namespace netDxf.Entities
         private static ToleranceValue ParseToleranceValue(string s)
         {
             if (string.IsNullOrEmpty(s))
+            {
                 return null;
+            }
 
             bool hasDiameterSymbol = false;
             StringBuilder value = new StringBuilder();
@@ -670,9 +678,13 @@ namespace netDxf.Entities
                 {
                     char symbol = Symbol(chars);
                     if (symbol == 'n')
+                    {
                         hasDiameterSymbol = true;
+                    }
                     else
+                    {
                         mat = ParseMaterialCondition(symbol);
+                    }
                 }
                 else
                 {
@@ -739,7 +751,10 @@ namespace netDxf.Entities
         {
             Vector3 newPosition = transformation * this.Position + translation;
             Vector3 newNormal = transformation * this.Normal;
-            if (Vector3.Equals(Vector3.Zero, newNormal)) newNormal = this.Normal;
+            if (Vector3.Equals(Vector3.Zero, newNormal))
+            {
+                newNormal = this.Normal;
+            }
 
             Matrix3 transOW = MathHelper.ArbitraryAxis(this.Normal);
             transOW *= Matrix3.RotationZ(this.Rotation * MathHelper.DegToRad);
@@ -755,7 +770,10 @@ namespace netDxf.Entities
 
             double scale = axisPoint.Modulus();
             double newTextHeight = this.TextHeight * scale;
-            if (MathHelper.IsZero(newTextHeight)) newTextHeight = MathHelper.Epsilon;
+            if (MathHelper.IsZero(newTextHeight))
+            {
+                newTextHeight = MathHelper.Epsilon;
+            }
 
             this.TextHeight = newTextHeight;
             this.Position = newPosition;
@@ -789,7 +807,9 @@ namespace netDxf.Entities
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 entity.XData.Add((XData) data.Clone());
+            }
 
             return entity;
         }
