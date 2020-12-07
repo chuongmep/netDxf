@@ -34,9 +34,7 @@ namespace netDxf.Tables
         #region delegates and events
 
         public delegate void LinetypeChangedEventHandler(TableObject sender, TableObjectChangedEventArgs<Linetype> e);
-
         public event LinetypeChangedEventHandler LinetypeChanged;
-
         protected virtual Linetype OnLinetypeChangedEvent(Linetype oldLinetype, Linetype newLinetype)
         {
             LinetypeChangedEventHandler ae = this.LinetypeChanged;
@@ -211,11 +209,7 @@ namespace netDxf.Tables
             get { return this.transparency; }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-                this.transparency = value;
+                this.transparency = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -252,7 +246,9 @@ namespace netDxf.Tables
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy;
         }

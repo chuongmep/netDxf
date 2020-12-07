@@ -30,8 +30,8 @@ namespace netDxf.Collections
 {
     /// <summary>
     /// Gives directly access to operations related with the entities in a drawing.
-    /// These are no more than shortcuts to the real places where the entities are stored in a document (drawing.Layouts[layoutName].AssociatedBlock.Entities).
-    /// The layout where the operations are performed is defined by the ActiveLayout.
+    /// These are no more than shortcuts to the real place where the entities are stored in a document (drawing.Layouts[layoutName].AssociatedBlock.Entities).
+    /// The layout where the operations are performed is defined by the ActiveLayout, by default the active layout is the Model.
     /// </summary>
     public class DrawingEntities
     {
@@ -71,7 +71,15 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Arc">arcs</see> list contained in the active layout.
+        /// Gets the complete list <see cref="EntityObject">entities</see> contained in the active layout.
+        /// </summary>
+        public IEnumerable<EntityObject> All
+        {
+            get { return this.document.Layouts[this.activeLayout].AssociatedBlock.Entities; }
+        }
+
+        /// <summary>
+        /// Gets the list of <see cref="Arc">arcs</see> contained in the active layout.
         /// </summary>
         public IEnumerable<Arc> Arcs
         {
@@ -79,15 +87,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="AttributeDefinition">attribute definitions</see> list in the active layout.
-        /// </summary>
-        public IEnumerable<AttributeDefinition> AttributeDefinitions
-        {
-            get { return this.document.Layouts[this.activeLayout].AssociatedBlock.AttributeDefinitions.Values; }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Ellipse">ellipses</see> list in the active layout.
+        /// Gets the list of <see cref="Ellipse">ellipses</see> in the active layout.
         /// </summary>
         public IEnumerable<Ellipse> Ellipses
         {
@@ -95,7 +95,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Circle">circles</see> list in the active layout.
+        /// Gets the list of <see cref="Circle">circles</see> in the active layout.
         /// </summary>
         public IEnumerable<Circle> Circles
         {
@@ -103,7 +103,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Face3d">3d faces</see> list in the active layout.
+        /// Gets the list of <see cref="Face3d">3d faces</see> in the active layout.
         /// </summary>
         public IEnumerable<Face3d> Faces3d
         {
@@ -111,7 +111,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Solid">solids</see> list in the active layout.
+        /// Gets the list of <see cref="Solid">solids</see> in the active layout.
         /// </summary>
         public IEnumerable<Solid> Solids
         {
@@ -119,7 +119,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Trace">traces</see> list in the active layout.
+        /// Gets the list of <see cref="Trace">traces</see> in the active layout.
         /// </summary>
         public IEnumerable<Trace> Traces
         {
@@ -127,7 +127,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Insert">inserts</see> list in the active layout.
+        /// Gets the list of <see cref="Insert">inserts</see> in the active layout.
         /// </summary>
         public IEnumerable<Insert> Inserts
         {
@@ -135,7 +135,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Line">lines</see> list in the active layout.
+        /// Gets the list of <see cref="Line">lines</see> in the active layout.
         /// </summary>
         public IEnumerable<Line> Lines
         {
@@ -143,7 +143,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Shape">shapes</see> list in the active layout.
+        /// Gets the list of <see cref="Shape">shapes</see> in the active layout.
         /// </summary>
         public IEnumerable<Shape> Shapes
         {
@@ -151,7 +151,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Polyline">polylines</see> list in the active layout.
+        /// Gets the list of <see cref="Polyline">polylines</see> in the active layout.
         /// </summary>
         public IEnumerable<Polyline> Polylines
         {
@@ -159,7 +159,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="LwPolyline">light weight polylines</see> list in the active layout.
+        /// Gets the list of <see cref="LwPolyline">light weight polylines</see> in the active layout.
         /// </summary>
         public IEnumerable<LwPolyline> LwPolylines
         {
@@ -167,7 +167,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="PolyfaceMeshes">polyface meshes</see> list in the active layout.
+        /// Gets the list of <see cref="PolyfaceMeshes">polyface meshes</see> in the active layout.
         /// </summary>
         public IEnumerable<PolyfaceMesh> PolyfaceMeshes
         {
@@ -175,7 +175,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Point">points</see> list in the active layout.
+        /// Gets the list of <see cref="Point">points</see> in the active layout.
         /// </summary>
         public IEnumerable<Point> Points
         {
@@ -183,7 +183,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Text">texts</see> list in the active layout.
+        /// Gets the list of <see cref="Text">texts</see> in the active layout.
         /// </summary>
         public IEnumerable<Text> Texts
         {
@@ -191,7 +191,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="MText">multiline texts</see> list in the active layout.
+        /// Gets the list of <see cref="MText">multiline texts</see> in the active layout.
         /// </summary>
         public IEnumerable<MText> MTexts
         {
@@ -199,7 +199,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Hatch">hatches</see> list in the active layout.
+        /// Gets the list of <see cref="Hatch">hatches</see> in the active layout.
         /// </summary>
         public IEnumerable<Hatch> Hatches
         {
@@ -207,7 +207,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Image">images</see> list in the active layout.
+        /// Gets the list of <see cref="Image">images</see> in the active layout.
         /// </summary>
         public IEnumerable<Image> Images
         {
@@ -215,7 +215,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Mesh">mesh</see> list in the active layout.
+        /// Gets the list of <see cref="Mesh">mesh</see> in the active layout.
         /// </summary>
         public IEnumerable<Mesh> Meshes
         {
@@ -223,7 +223,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Leader">leader</see> list in the active layout.
+        /// Gets the list of <see cref="Leader">leader</see> in the active layout.
         /// </summary>
         public IEnumerable<Leader> Leaders
         {
@@ -231,7 +231,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Tolerance">tolerance</see> list in the active layout.
+        /// Gets the list of <see cref="Tolerance">tolerance</see> in the active layout.
         /// </summary>
         public IEnumerable<Tolerance> Tolerances
         {
@@ -239,7 +239,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Underlay">underlay</see> list in the active layout.
+        /// Gets the list of <see cref="Underlay">underlay</see> in the active layout.
         /// </summary>
         public IEnumerable<Underlay> Underlays
         {
@@ -247,7 +247,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="MLine">multilines</see> list in the active layout.
+        /// Gets the list of <see cref="MLine">multilines</see> in the active layout.
         /// </summary>
         public IEnumerable<MLine> MLines
         {
@@ -255,7 +255,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Dimension">dimensions</see> list in the active layout.
+        /// Gets the list of <see cref="Dimension">dimensions</see> in the active layout.
         /// </summary>
         public IEnumerable<Dimension> Dimensions
         {
@@ -263,7 +263,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Spline">splines</see> list in the active layout.
+        /// Gets the list of <see cref="Spline">splines</see> in the active layout.
         /// </summary>
         public IEnumerable<Spline> Splines
         {
@@ -271,7 +271,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Ray">rays</see> list in the active layout.
+        /// Gets the list of <see cref="Ray">rays</see> in the active layout.
         /// </summary>
         public IEnumerable<Ray> Rays
         {
@@ -279,7 +279,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Viewport">viewports</see> list in the active layout.
+        /// Gets the list of <see cref="Viewport">viewports</see> in the active layout.
         /// </summary>
         public IEnumerable<Viewport> Viewports
         {
@@ -287,7 +287,7 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="XLine">extension lines</see> list in the active layout.
+        /// Gets the list of <see cref="XLine">extension lines</see> in the active layout.
         /// </summary>
         public IEnumerable<XLine> XLines
         {
@@ -295,11 +295,19 @@ namespace netDxf.Collections
         }
 
         /// <summary>
-        /// Gets the <see cref="Wipeout">wipeouts</see> list in the active layout.
+        /// Gets the list of <see cref="Wipeout">wipeouts</see> in the active layout.
         /// </summary>
         public IEnumerable<Wipeout> Wipeouts
         {
             get { return this.document.Layouts[this.activeLayout].AssociatedBlock.Entities.OfType<Wipeout>(); }
+        }
+
+        /// <summary>
+        /// Gets the list of <see cref="AttributeDefinition">attribute definitions</see> in the active layout.
+        /// </summary>
+        public IEnumerable<AttributeDefinition> AttributeDefinitions
+        {
+            get { return this.document.Layouts[this.activeLayout].AssociatedBlock.AttributeDefinitions.Values; }
         }
 
         #endregion

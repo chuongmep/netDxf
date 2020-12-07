@@ -36,9 +36,7 @@ namespace netDxf.Entities
         #region delegates and events
 
         public delegate void HatchBoundaryPathAddedEventHandler(Hatch sender, ObservableCollectionEventArgs<HatchBoundaryPath> e);
-
         public event HatchBoundaryPathAddedEventHandler HatchBoundaryPathAdded;
-
         protected virtual void OnHatchBoundaryPathAddedEvent(HatchBoundaryPath item)
         {
             HatchBoundaryPathAddedEventHandler ae = this.HatchBoundaryPathAdded;
@@ -49,9 +47,7 @@ namespace netDxf.Entities
         }
 
         public delegate void HatchBoundaryPathRemovedEventHandler(Hatch sender, ObservableCollectionEventArgs<HatchBoundaryPath> e);
-
         public event HatchBoundaryPathRemovedEventHandler HatchBoundaryPathRemoved;
-
         protected virtual void OnHatchBoundaryPathRemovedEvent(HatchBoundaryPath item)
         {
             HatchBoundaryPathRemovedEventHandler ae = this.HatchBoundaryPathRemoved;
@@ -89,11 +85,7 @@ namespace netDxf.Entities
         public Hatch(HatchPattern pattern, bool associative)
             : base(EntityType.Hatch, DxfObjectCode.Hatch)
         {
-            if (pattern == null)
-            {
-                throw new ArgumentNullException(nameof(pattern));
-            }
-            this.pattern = pattern;
+            this.pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
             this.boundaryPaths = new ObservableCollection<HatchBoundaryPath>();
             this.boundaryPaths.BeforeAddItem += this.BoundaryPaths_BeforeAddItem;
             this.boundaryPaths.AddItem += this.BoundaryPaths_AddItem;
@@ -116,11 +108,7 @@ namespace netDxf.Entities
         public Hatch(HatchPattern pattern, IEnumerable<HatchBoundaryPath> paths, bool associative)
             : base(EntityType.Hatch, DxfObjectCode.Hatch)
         {
-            if (pattern == null)
-            {
-                throw new ArgumentNullException(nameof(pattern));
-            }
-            this.pattern = pattern;
+            this.pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
 
             if (paths == null)
             {
@@ -155,11 +143,7 @@ namespace netDxf.Entities
             get { return this.pattern; }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-                this.pattern = value;
+                this.pattern = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 

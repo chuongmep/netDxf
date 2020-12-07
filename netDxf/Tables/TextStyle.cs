@@ -98,16 +98,22 @@ namespace netDxf.Tables
             : base(name, DxfObjectCode.TextStyle, checkName)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new ArgumentNullException(nameof(name), "The text style name should be at least one character long.");
-            this.IsReserved = name.Equals(DefaultName, StringComparison.OrdinalIgnoreCase);
+            }
 
             if (string.IsNullOrEmpty(font))
+            {
                 throw new ArgumentNullException(nameof(font));
+            }
 
-            if (!Path.GetExtension(font).Equals(".TTF", StringComparison.InvariantCultureIgnoreCase) &&
-                !Path.GetExtension(font).Equals(".SHX", StringComparison.InvariantCultureIgnoreCase))
+            if (!Path.GetExtension(font).Equals(".TTF", StringComparison.OrdinalIgnoreCase) &&
+                !Path.GetExtension(font).Equals(".SHX", StringComparison.OrdinalIgnoreCase))
+            {
                 throw new ArgumentException("Only true type TTF fonts and ACAD compiled shape SHX fonts are allowed.");
+            }
 
+            this.IsReserved = name.Equals(DefaultName, StringComparison.OrdinalIgnoreCase);
             this.file = font;
             this.bigFont = string.Empty;
             this.widthFactor = 1.0;
@@ -165,8 +171,10 @@ namespace netDxf.Tables
             this.isVertical = false;
             this.isBackward = false;
             this.isUpsideDown = false;
-            if(string.IsNullOrEmpty(fontFamily))
+            if (string.IsNullOrEmpty(fontFamily))
+            {
                 throw new ArgumentNullException(nameof(fontFamily));
+            }
             this.fontFamilyName = fontFamily;
             this.fontStyle = fontStyle;
         }
@@ -189,11 +197,15 @@ namespace netDxf.Tables
             set
             {
                 if (string.IsNullOrEmpty(value))
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
 
-                if (!Path.GetExtension(value).Equals(".TTF", StringComparison.InvariantCultureIgnoreCase) &&
-                    !Path.GetExtension(value).Equals(".SHX", StringComparison.InvariantCultureIgnoreCase))
+                if (!Path.GetExtension(value).Equals(".TTF", StringComparison.OrdinalIgnoreCase) &&
+                    !Path.GetExtension(value).Equals(".SHX", StringComparison.OrdinalIgnoreCase))
+                {
                     throw new ArgumentException("Only true type TTF fonts and ACAD compiled shape SHX fonts are allowed.");
+                }
 
                 this.fontFamilyName = string.Empty;
                 this.bigFont = string.Empty;
@@ -212,15 +224,26 @@ namespace netDxf.Tables
             set
             {
                 if (string.IsNullOrEmpty(value))
+                {
                     this.bigFont = string.Empty;
+                }
                 else
                 {
                     if (string.IsNullOrEmpty(this.file))
+                    {
                         throw new NullReferenceException("The Big Font is only applicable for SHX Asian fonts.");
-                    if (!Path.GetExtension(this.file).Equals(".SHX", StringComparison.InvariantCultureIgnoreCase))
+                    }
+
+                    if (!Path.GetExtension(this.file).Equals(".SHX", StringComparison.OrdinalIgnoreCase))
+                    {
                         throw new NullReferenceException("The Big Font is only applicable for SHX Asian fonts.");
-                    if(!Path.GetExtension(value).Equals(".SHX", StringComparison.InvariantCultureIgnoreCase))
+                    }
+
+                    if (!Path.GetExtension(value).Equals(".SHX", StringComparison.OrdinalIgnoreCase))
+                    {
                         throw new ArgumentException("The Big Font is only applicable for SHX Asian fonts.", nameof(value));
+                    }
+
                     this.bigFont = value;
                 }               
             }
@@ -241,7 +264,9 @@ namespace netDxf.Tables
             set
             {
                 if (string.IsNullOrEmpty(value))
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
                 this.file = string.Empty;
                 this.bigFont = string.Empty;
                 this.fontStyle = FontStyle.Regular;
@@ -261,8 +286,10 @@ namespace netDxf.Tables
             get { return this.fontStyle; }
             set
             {
-                if (!string.IsNullOrEmpty(this.file)) return;
-                this.fontStyle = value;
+                if (string.IsNullOrEmpty(this.file))
+                {
+                    this.fontStyle = value;
+                }
             }
         }
 
@@ -276,7 +303,9 @@ namespace netDxf.Tables
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The TextStyle height must be equals or greater than zero.");
+                }
                 this.height = value;
             }
         }
@@ -291,7 +320,9 @@ namespace netDxf.Tables
             set
             {
                 if (value < 0.01 || value > 100.0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The TextStyle width factor valid values range from 0.01 to 100.");
+                }
                 this.widthFactor = value;
             }
         }
@@ -306,7 +337,9 @@ namespace netDxf.Tables
             set
             {
                 if (value < -85.0 || value > 85.0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The TextStyle oblique angle valid values range from -85 to 85.");
+                }
                 this.obliqueAngle = value;
             }
         }
@@ -386,7 +419,9 @@ namespace netDxf.Tables
             }
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy;
         }

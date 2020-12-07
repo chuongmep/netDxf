@@ -93,11 +93,11 @@ namespace netDxf.Tables
         public LinetypeShapeSegment(string name, ShapeStyle style, double length, Vector2 offset, LinetypeSegmentRotationType rotationType, double rotation, double scale) : base(LinetypeSegmentType.Shape, length)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new ArgumentNullException(nameof(name), "The linetype shape name should be at least one character long.");
+            }
             this.name = name;
-            if (style == null)
-                throw new ArgumentNullException(nameof(style));
-            this.style = style;
+            this.style = style ?? throw new ArgumentNullException(nameof(style));
             this.offset = offset;
             this.rotationType = rotationType;
             this.rotation = MathHelper.NormalizeAngle(rotation);
@@ -122,7 +122,9 @@ namespace netDxf.Tables
             internal set
             {
                 if (string.IsNullOrEmpty(value))
+                {
                     throw new ArgumentNullException(nameof(value), "The linetype shape name should be at least one character long.");
+                }
                 this.name = value;
             }
         }
@@ -138,9 +140,7 @@ namespace netDxf.Tables
             get { return this.style; }
             internal set
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
-                this.style = value;
+                this.style = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 

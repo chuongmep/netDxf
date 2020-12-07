@@ -36,31 +36,29 @@ namespace netDxf.Objects
         #region delegates and events
 
         public delegate void MLineStyleElementAddedEventHandler(MLineStyle sender, MLineStyleElementChangeEventArgs e);
-
         public event MLineStyleElementAddedEventHandler MLineStyleElementAdded;
-
         protected virtual void OnMLineStyleElementAddedEvent(MLineStyleElement item)
         {
             MLineStyleElementAddedEventHandler ae = this.MLineStyleElementAdded;
             if (ae != null)
+            {
                 ae(this, new MLineStyleElementChangeEventArgs(item));
+            }
         }
 
         public delegate void MLineStyleElementRemovedEventHandler(MLineStyle sender, MLineStyleElementChangeEventArgs e);
-
         public event MLineStyleElementRemovedEventHandler MLineStyleElementRemoved;
-
         protected virtual void OnMLineStyleElementRemovedEvent(MLineStyleElement item)
         {
             MLineStyleElementRemovedEventHandler ae = this.MLineStyleElementRemoved;
             if (ae != null)
+            {
                 ae(this, new MLineStyleElementChangeEventArgs(item));
+            }
         }
 
         public delegate void MLineStyleElementLinetypeChangedEventHandler(MLineStyle sender, TableObjectChangedEventArgs<Linetype> e);
-
         public event MLineStyleElementLinetypeChangedEventHandler MLineStyleElementLinetypeChanged;
-
         protected virtual Linetype OnMLineStyleElementLinetypeChangedEvent(Linetype oldLinetype, Linetype newLinetype)
         {
             MLineStyleElementLinetypeChangedEventHandler ae = this.MLineStyleElementLinetypeChanged;
@@ -199,9 +197,7 @@ namespace netDxf.Objects
             get { return this.fillColor; }
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
-                this.fillColor = value;
+                this.fillColor = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -305,9 +301,13 @@ namespace netDxf.Objects
         {
             // null items are not allowed
             if (e.Item == null)
+            {
                 e.Cancel = true;
+            }
             else
+            {
                 e.Cancel = false;
+            }
         }
 
         private void Elements_AddItem(ObservableCollection<MLineStyleElement> sender, ObservableCollectionEventArgs<MLineStyleElement> e)

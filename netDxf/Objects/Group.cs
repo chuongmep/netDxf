@@ -36,9 +36,7 @@ namespace netDxf.Objects
         #region delegates and events
 
         public delegate void EntityAddedEventHandler(Group sender, GroupEntityChangeEventArgs e);
-
         public event EntityAddedEventHandler EntityAdded;
-
         protected virtual void OnEntityAddedEvent(EntityObject item)
         {
             EntityAddedEventHandler ae = this.EntityAdded;
@@ -47,9 +45,7 @@ namespace netDxf.Objects
         }
 
         public delegate void EntityRemovedEventHandler(Group sender, GroupEntityChangeEventArgs e);
-
         public event EntityRemovedEventHandler EntityRemoved;
-
         protected virtual void OnEntityRemovedEvent(EntityObject item)
         {
             EntityRemovedEventHandler ae = this.EntityRemoved;
@@ -124,8 +120,10 @@ namespace netDxf.Objects
             this.entities.AddItem += this.Entities_AddItem;
             this.entities.BeforeRemoveItem += this.Entities_BeforeRemoveItem;
             this.entities.RemoveItem += this.Entities_RemoveItem;
-            if(entities != null)
+            if (entities != null)
+            {
                 this.entities.AddRange(entities);
+            }
         }
 
         internal Group(string name, bool checkName)
@@ -232,7 +230,9 @@ namespace netDxf.Objects
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy;
         }
@@ -254,11 +254,17 @@ namespace netDxf.Objects
         {
             // null or duplicate items are not allowed in the entities list.
             if (e.Item == null)
+            {
                 e.Cancel = true;
+            }
             else if (this.entities.Contains(e.Item))
+            {
                 e.Cancel = true;
+            }
             else
+            {
                 e.Cancel = false;
+            }
         }
 
         private void Entities_AddItem(EntityCollection sender, EntityCollectionEventArgs e)

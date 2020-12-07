@@ -115,9 +115,7 @@ namespace netDxf.Entities
             this.offset = offset;
             this.rotation = MathHelper.NormalizeAngle(rotation);
 
-            if (style == null)
-                throw new ArgumentNullException(nameof(style));
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
             this.Normal = normal;
             this.Elevation = ocsPoints[0].Z;
             this.Update();
@@ -154,9 +152,7 @@ namespace netDxf.Entities
                 throw new ArgumentOutOfRangeException(nameof(offset), "The offset value must be equal or greater than zero.");
             this.offset = offset;
             this.rotation = MathHelper.NormalizeAngle(rotation);
-            if (style == null)
-                throw new ArgumentNullException(nameof(style));
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
             this.Update();
         }
 

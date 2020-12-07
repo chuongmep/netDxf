@@ -47,8 +47,8 @@ namespace netDxf.Units
 
             if (month < 3)
             {
-                year = year - 1;
-                month = month + 12;
+                year -= 1;
+                month += 12;
             }
 
             int a = year / 100;
@@ -82,12 +82,12 @@ namespace netDxf.Units
             double julian = (int) date;
             double fraction = date - julian;
 
-            int temp = (int) ((julian - 1867216.25)/36524.25);
-            julian = julian + 1 + temp - (int) (temp/4.0);
+            int temp = (int) ((julian - 1867216.25) / 36524.25);
+            julian = julian + 1 + temp - (int) (temp / 4.0);
 
             int a = (int) julian + 1524;
             int b = (int) ((a - 122.1) / 365.25);
-            int c = (int) (365.25*b);
+            int c = (int) (365.25 * b);
             int d = (int) ((a - c) / 30.6001);
 
             int months = d < 14 ? d - 1 : d - 13;
@@ -102,6 +102,7 @@ namespace netDxf.Units
             double decimalSeconds = fraction * 86400;
             int seconds = (int) decimalSeconds;
             int milliseconds = (int) ((decimalSeconds - seconds) * 1000);
+
             return new DateTime(years, months, days, hours, minutes, seconds, milliseconds);
         }
 

@@ -119,12 +119,7 @@ namespace netDxf.Entities
         public Image(ImageDefinition imageDefinition, Vector3 position, double width, double height)
             : base(EntityType.Image, DxfObjectCode.Image)
         {
-            if (imageDefinition == null)
-            {
-                throw new ArgumentNullException(nameof(imageDefinition));
-            }
-
-            this.imageDefinition = imageDefinition;
+            this.imageDefinition = imageDefinition ?? throw new ArgumentNullException(nameof(imageDefinition));
             this.position = position;
             this.uvector = Vector2.UnitX;
             this.vvector = Vector2.UnitY;

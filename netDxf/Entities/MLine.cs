@@ -36,9 +36,7 @@ namespace netDxf.Entities
         #region delegates and events
 
         public delegate void MLineStyleChangedEventHandler(MLine sender, TableObjectChangedEventArgs<MLineStyle> e);
-
         public event MLineStyleChangedEventHandler MLineStyleChanged;
-
         protected virtual MLineStyle OnMLineStyleChangedEvent(MLineStyle oldMLineStyle, MLineStyle newMLineStyle)
         {
             MLineStyleChangedEventHandler ae = this.MLineStyleChanged;

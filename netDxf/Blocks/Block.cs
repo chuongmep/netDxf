@@ -549,8 +549,10 @@ namespace netDxf.Blocks
 
             foreach (AttributeDefinition attdef in this.attributes.Values)
             {
-                if(!dwg.Layouts[Layout.ModelSpaceName].AssociatedBlock.AttributeDefinitions.ContainsTag(attdef.Tag))
+                if (!dwg.Layouts[Layout.ModelSpaceName].AssociatedBlock.AttributeDefinitions.ContainsTag(attdef.Tag))
+                {
                     dwg.Layouts[Layout.ModelSpaceName].AssociatedBlock.AttributeDefinitions.Add((AttributeDefinition) attdef.Clone());
+                }
             }
 
             foreach (EntityObject entity in this.entities)
@@ -589,7 +591,7 @@ namespace netDxf.Blocks
             {
                 Description = block.description,
                 Flags = block.flags,
-                Layer = (Layer)block.Layer.Clone(),
+                Layer = (Layer) block.Layer.Clone(),
                 Origin = block.origin
             };
 

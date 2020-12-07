@@ -87,11 +87,7 @@ namespace netDxf.Entities
             Vector2 vec = leaderEndPoint - featurePoint;
             this.axis = vec.Y > vec.X ? OrdinateDimensionAxis.X : OrdinateDimensionAxis.Y;
             this.rotation = 0.0;
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
         }
 
         /// <summary>
@@ -111,11 +107,7 @@ namespace netDxf.Entities
             this.textRefPoint = leaderEndPoint;
             this.axis = axis;
             this.rotation = 0.0;
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
         }
 
         /// <summary>
@@ -177,11 +169,7 @@ namespace netDxf.Entities
             this.firstPoint = featurePoint;
             this.axis = axis;
 
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
 
             double angle = rotation * MathHelper.DegToRad;
             if (this.Axis == OrdinateDimensionAxis.X)

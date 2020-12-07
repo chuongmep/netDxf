@@ -166,30 +166,29 @@ namespace netDxf.Tables
                 throw new ArgumentException("The shape file must have the extension SHP.", nameof(file));
             }
 
-            using (StreamReader reader = new StreamReader(System.IO.File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
+            using StreamReader reader = new StreamReader(System.IO.File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
+                string line = reader.ReadLine();
+                if (line == null)
                 {
-                    string line = reader.ReadLine();
-                    if (line == null)
-                    {
-                        throw new FileLoadException("Unknown error reading SHP file.", file);
-                    }
-                    // lines starting with semicolons are comments
-                    if (line.StartsWith(";"))
-                    {
-                        continue;
-                    }
-                    // every shape definition starts with '*'
-                    if (!line.StartsWith("*"))
-                    {
-                        continue;
-                    }
-
-                    string[] tokens = line.TrimStart('*').Split(',');
-                    names.Add(tokens[2]);
+                    throw new FileLoadException("Unknown error reading SHP file.", file);
                 }
+                // lines starting with semicolons are comments
+                if (line.StartsWith(";"))
+                {
+                    continue;
+                }
+                // every shape definition starts with '*'
+                if (!line.StartsWith("*"))
+                {
+                    continue;
+                }
+
+                string[] tokens = line.TrimStart('*').Split(',');
+                names.Add(tokens[2]);
             }
+
             return names;
         }
 
@@ -342,34 +341,33 @@ namespace netDxf.Tables
                 return 0;
             }
 
-            using (StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
+            using StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
+                string line = reader.ReadLine();
+                if (line == null)
                 {
-                    string line = reader.ReadLine();
-                    if (line == null)
-                    {
-                        throw new FileLoadException("Unknown error reading SHP file.", f);
-                    }
-                    // lines starting with semicolons are comments
-                    if (line.StartsWith(";"))
-                    {
-                        continue;
-                    }
-                    // every shape definition starts with '*'
-                    if (!line.StartsWith("*"))
-                    {
-                        continue;
-                    }
+                    throw new FileLoadException("Unknown error reading SHP file.", f);
+                }
+                // lines starting with semicolons are comments
+                if (line.StartsWith(";"))
+                {
+                    continue;
+                }
+                // every shape definition starts with '*'
+                if (!line.StartsWith("*"))
+                {
+                    continue;
+                }
 
-                    string[] tokens = line.TrimStart('*').Split(',');
-                    // the third item is the name of the shape
-                    if (string.Equals(tokens[2], name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        return short.Parse(tokens[0]);
-                    }
+                string[] tokens = line.TrimStart('*').Split(',');
+                // the third item is the name of the shape
+                if (string.Equals(tokens[2], name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return short.Parse(tokens[0]);
                 }
             }
+
             return 0;
         }
 
@@ -394,32 +392,30 @@ namespace netDxf.Tables
 
             if (string.IsNullOrEmpty(f)) return string.Empty;
 
-            using (StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
+            using StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
+                string line = reader.ReadLine();
+                if (line == null)
                 {
-                    string line = reader.ReadLine();
-                    if (line == null)
-                    {
-                        throw new FileLoadException("Unknown error reading SHP file.", f);
-                    }
-                    // lines starting with semicolons are comments
-                    if (line.StartsWith(";"))
-                    {
-                        continue;
-                    }
-                    // every shape definition starts with '*'
-                    if (!line.StartsWith("*"))
-                    {
-                        continue;
-                    }
+                    throw new FileLoadException("Unknown error reading SHP file.", f);
+                }
+                // lines starting with semicolons are comments
+                if (line.StartsWith(";"))
+                {
+                    continue;
+                }
+                // every shape definition starts with '*'
+                if (!line.StartsWith("*"))
+                {
+                    continue;
+                }
 
-                    string[] tokens = line.TrimStart('*').Split(',');
-                    // the first item is the number of the shape
-                    if (short.Parse(tokens[0]) == number)
-                    {
-                        return tokens[2];
-                    }
+                string[] tokens = line.TrimStart('*').Split(',');
+                // the first item is the number of the shape
+                if (short.Parse(tokens[0]) == number)
+                {
+                    return tokens[2];
                 }
             }
 
@@ -440,7 +436,9 @@ namespace netDxf.Tables
             ShapeStyle copy = new ShapeStyle(newName, this.shapeFile, this.size, this.widthFactor, this.obliqueAngle);
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy;
         }

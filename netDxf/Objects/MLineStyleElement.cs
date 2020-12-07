@@ -35,9 +35,7 @@ namespace netDxf.Objects
         #region delegates and events
 
         public delegate void LinetypeChangedEventHandler(MLineStyleElement sender, TableObjectChangedEventArgs<Linetype> e);
-
         public event LinetypeChangedEventHandler LinetypeChanged;
-
         protected virtual Linetype OnLinetypeChangedEvent(Linetype oldLinetype, Linetype newLinetype)
         {
             LinetypeChangedEventHandler ae = this.LinetypeChanged;
@@ -108,9 +106,7 @@ namespace netDxf.Objects
             get { return this.color; }
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
-                this.color = value;
+                this.color = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -123,7 +119,9 @@ namespace netDxf.Objects
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
                 this.linetype = this.OnLinetypeChangedEvent(this.linetype, value);
             }
         }
@@ -145,7 +143,9 @@ namespace netDxf.Objects
         public int CompareTo(MLineStyleElement other)
         {
             if (other == null)
+            {
                 throw new ArgumentNullException(nameof(other));
+            }
 
             return -this.offset.CompareTo(other.offset);
         }
@@ -161,10 +161,14 @@ namespace netDxf.Objects
         public override bool Equals(object other)
         {
             if (other == null)
+            {
                 return false;
+            }
 
             if (this.GetType() != other.GetType())
+            {
                 return false;
+            }
 
             return this.Equals((MLineStyleElement) other);
         }
@@ -180,7 +184,9 @@ namespace netDxf.Objects
         public bool Equals(MLineStyleElement other)
         {
             if (other == null)
+            {
                 return false;
+            }
 
             return MathHelper.IsEqual(this.offset, other.offset);
         }

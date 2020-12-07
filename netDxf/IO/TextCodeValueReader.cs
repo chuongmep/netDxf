@@ -356,8 +356,7 @@ namespace netDxf.IO
 
         private short ReadShort(string valueString)
         {
-            short result;
-            if (short.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
+            if (short.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out short result))
             {
                 return result;
             }
@@ -369,8 +368,7 @@ namespace netDxf.IO
 
         private int ReadInt(string valueString)
         {
-            int result;
-            if (int.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
+            if (int.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
             {
                 return result;
             }
@@ -382,8 +380,7 @@ namespace netDxf.IO
 
         private long ReadLong(string valueString)
         {
-            long result;
-            if (long.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
+            if (long.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out long result))
             {
                 return result;
             }
@@ -395,8 +392,7 @@ namespace netDxf.IO
 
         private bool ReadBool(string valueString)
         {
-            byte result;
-            if (byte.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
+            if (byte.TryParse(valueString, NumberStyles.Integer, CultureInfo.InvariantCulture, out byte result))
             {
                 return result > 0;
             }
@@ -408,8 +404,7 @@ namespace netDxf.IO
 
         private double ReadDouble(string valueString)
         {
-            double result;
-            if (double.TryParse(valueString, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+            if (double.TryParse(valueString, NumberStyles.Float, CultureInfo.InvariantCulture, out double result))
             {
                 return result;
             }
@@ -426,8 +421,7 @@ namespace netDxf.IO
 
         private string ReadHex(string valueString)
         {
-            long result;
-            if (long.TryParse(valueString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out result))
+            if (long.TryParse(valueString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long result))
             {
                 return result.ToString("X");
             }

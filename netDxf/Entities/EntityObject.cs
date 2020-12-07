@@ -126,11 +126,7 @@ namespace netDxf.Entities
             get { return this.color; }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-                this.color = value;
+                this.color = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -183,11 +179,7 @@ namespace netDxf.Entities
             get { return this.transparency; }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-                this.transparency = value;
+                this.transparency = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 

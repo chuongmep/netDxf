@@ -67,7 +67,9 @@ namespace netDxf.Tables
             : base(name, DxfObjectCode.AppId, checkName)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new ArgumentNullException(nameof(name), "The application registry name should be at least one character long.");
+            }
 
             this.IsReserved = name.Equals(DefaultName, StringComparison.OrdinalIgnoreCase);
         }
@@ -99,7 +101,9 @@ namespace netDxf.Tables
             ApplicationRegistry copy = new ApplicationRegistry(newName);
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy ;
         }

@@ -33,9 +33,7 @@ namespace netDxf.Tables
         #region delegates and events
 
         public delegate void TextStyleChangedEventHandler(LinetypeTextSegment sender, TableObjectChangedEventArgs<TextStyle> e);
-
         public event TextStyleChangedEventHandler TextStyleChanged;
-
         protected virtual TextStyle OnTextStyleChangedEvent(TextStyle oldTextStyle, TextStyle newTextStyle)
         {
             TextStyleChangedEventHandler ae = this.TextStyleChanged;
@@ -92,11 +90,8 @@ namespace netDxf.Tables
         /// <param name="scale">Scale of the text.</param>
         public LinetypeTextSegment(string text, TextStyle style, double length, Vector2 offset, LinetypeSegmentRotationType rotationType, double rotation, double scale) : base(LinetypeSegmentType.Text, length)
         {
-            if (string.IsNullOrEmpty(text)) this.text = string.Empty;
-            this.text = text;
-            if (style == null)
-                throw new ArgumentNullException(nameof(style), "The style must be a valid TextStyle.");
-            this.style = style;
+            this.text = string.IsNullOrEmpty(text) ? string.Empty : text;
+            this.style = style ?? throw new ArgumentNullException(nameof(style), "The style must be a valid TextStyle.");
             this.offset = offset;
             this.rotationType = rotationType;
             this.rotation = MathHelper.NormalizeAngle(rotation);
@@ -113,12 +108,7 @@ namespace netDxf.Tables
         public string Text
         {
             get { return this.text; }
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                    this.text = string.Empty;
-                this.text = value;
-            }
+            set { this.text = string.IsNullOrEmpty(value) ? string.Empty : value; }
         }
 
         /// <summary>
@@ -130,7 +120,9 @@ namespace netDxf.Tables
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
                 this.style = this.OnTextStyleChangedEvent(this.style, value);
             }
         }

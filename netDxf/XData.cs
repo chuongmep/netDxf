@@ -51,11 +51,7 @@ namespace netDxf
         /// <param name="appReg">Name of the application associated with the list of extended data records.</param>
         public XData(ApplicationRegistry appReg)
         {
-            if (appReg == null)
-            {
-                throw new ArgumentNullException(nameof(appReg));
-            }
-            this.appReg = appReg;
+            this.appReg = appReg ?? throw new ArgumentNullException(nameof(appReg));
             this.xData = new List<XDataRecord>();
         }
 

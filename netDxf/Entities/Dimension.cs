@@ -39,9 +39,7 @@ namespace netDxf.Entities
         #region delegates and events
 
         public delegate void DimensionStyleChangedEventHandler(Dimension sender, TableObjectChangedEventArgs<DimensionStyle> e);
-
         public event DimensionStyleChangedEventHandler DimensionStyleChanged;
-
         protected virtual DimensionStyle OnDimensionStyleChangedEvent(DimensionStyle oldStyle, DimensionStyle newStyle)
         {
             DimensionStyleChangedEventHandler ae = this.DimensionStyleChanged;
@@ -55,9 +53,7 @@ namespace netDxf.Entities
         }
 
         public delegate void DimensionBlockChangedEventHandler(Dimension sender, TableObjectChangedEventArgs<Block> e);
-
         public event DimensionBlockChangedEventHandler DimensionBlockChanged;
-
         protected virtual Block OnDimensionBlockChangedEvent(Block oldBlock, Block newBlock)
         {
             DimensionBlockChangedEventHandler ae = this.DimensionBlockChanged;
@@ -75,25 +71,25 @@ namespace netDxf.Entities
         #region delegates and events for style overrides
 
         public delegate void DimensionStyleOverrideAddedEventHandler(Dimension sender, DimensionStyleOverrideChangeEventArgs e);
-
         public event DimensionStyleOverrideAddedEventHandler DimensionStyleOverrideAdded;
-
         protected virtual void OnDimensionStyleOverrideAddedEvent(DimensionStyleOverride item)
         {
             DimensionStyleOverrideAddedEventHandler ae = this.DimensionStyleOverrideAdded;
             if (ae != null)
+            {
                 ae(this, new DimensionStyleOverrideChangeEventArgs(item));
+            }
         }
 
         public delegate void DimensionStyleOverrideRemovedEventHandler(Dimension sender, DimensionStyleOverrideChangeEventArgs e);
-
         public event DimensionStyleOverrideRemovedEventHandler DimensionStyleOverrideRemoved;
-
         protected virtual void OnDimensionStyleOverrideRemovedEvent(DimensionStyleOverride item)
         {
             DimensionStyleOverrideRemovedEventHandler ae = this.DimensionStyleOverrideRemoved;
             if (ae != null)
+            {
                 ae(this, new DimensionStyleOverrideChangeEventArgs(item));
+            }
         }
 
         #endregion

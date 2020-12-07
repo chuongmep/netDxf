@@ -96,7 +96,7 @@ namespace netDxf
             {
                 return new Matrix3(0.0, 0.0, 0.0,
                                    0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0);
+                                   0.0, 0.0, 0.0) {dirty = false, isIdentity = false};
             }
         }
 
@@ -416,6 +416,7 @@ namespace netDxf
                     this.isIdentity = true;
                     return this.isIdentity;
                 }
+
                 return this.isIdentity;
 
                 //if (this.dirty)

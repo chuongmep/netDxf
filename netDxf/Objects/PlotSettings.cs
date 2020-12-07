@@ -212,8 +212,10 @@ namespace netDxf.Objects
             get { return this.numeratorScale; }
             set
             {
-                if(value <= 0.0)
+                if (value <= 0.0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The print scale numerator must be a number greater than zero.");
+                }
                 this.numeratorScale = value;
             }
         }
@@ -227,7 +229,9 @@ namespace netDxf.Objects
             set
             {
                 if (value <= 0.0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The print scale denominator must be a number greater than zero.");
+                }
                 this.denominatorScale = value;
             }
         }
@@ -306,8 +310,10 @@ namespace netDxf.Objects
             get { return this.shadePlotDPI; }
             set
             {
-                if(value <100 || value > 32767)
+                if (value < 100 || value > 32767)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The valid shade plot DPI values range from 100 to 23767.");
+                }
                 this.shadePlotDPI = value;
             }
         }

@@ -90,9 +90,7 @@ namespace netDxf.Entities
         #region delegates and events
 
         public delegate void TextStyleChangedEventHandler(MText sender, TableObjectChangedEventArgs<TextStyle> e);
-
         public event TextStyleChangedEventHandler TextStyleChanged;
-
         protected virtual TextStyle OnTextStyleChangedEvent(TextStyle oldTextStyle, TextStyle newTextStyle)
         {
             TextStyleChangedEventHandler ae = this.TextStyleChanged;
@@ -280,11 +278,7 @@ namespace netDxf.Entities
             this.text = text;
             this.position = position;
             this.attachmentPoint = MTextAttachmentPoint.TopLeft;
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.style = style;
+            this.style = style ?? throw new ArgumentNullException(nameof(style));
             this.rectangleWidth = rectangleWidth;
             if (height <= 0.0)
             {

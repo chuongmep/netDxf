@@ -82,7 +82,9 @@ namespace netDxf
         public Transparency(short value)
         {
             if (value < 0 || value > 90)
+            {
                 throw new ArgumentOutOfRangeException(nameof(value), value, "Accepted transparency values range from 0 to 90.");
+            }
             this.transparency = value;
         }
 
@@ -118,7 +120,9 @@ namespace netDxf
             set
             {
                 if (value < 0 || value > 90)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "Accepted transparency values range from 0 to 90.");
+                }
                 this.transparency = value;
             }
         }
@@ -203,7 +207,9 @@ namespace netDxf
         public bool Equals(Transparency other)
         {
             if (other == null)
+            {
                 return false;
+            }
 
             return other.transparency == this.transparency;
         }
@@ -219,9 +225,14 @@ namespace netDxf
         public override string ToString()
         {
             if (this.transparency == -1)
+            {
                 return "ByLayer";
+            }
+
             if (this.transparency == 100)
+            {
                 return "ByBlock";
+            }
 
             return this.transparency.ToString(CultureInfo.CurrentCulture);
         }

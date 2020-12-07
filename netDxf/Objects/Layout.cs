@@ -89,7 +89,9 @@ namespace netDxf.Objects
             : base(name, DxfObjectCode.Layout, true)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new ArgumentNullException(nameof(name), "The layout name should be at least one character long.");
+            }
 
             if (name.Equals(ModelSpaceName, StringComparison.OrdinalIgnoreCase))
             {
@@ -144,7 +146,9 @@ namespace netDxf.Objects
             set
             {
                 if (value <= 0)
+                {
                     throw new ArgumentException("The tab order index must be greater than zero.", nameof(value));
+                }
                 this.tabOrder = value;
             }
         }
@@ -291,10 +295,15 @@ namespace netDxf.Objects
         /// </remarks>
         public override TableObject Clone(string newName)
         {
-            if(!this.IsPaperSpace)
+            if (!this.IsPaperSpace)
+            {
                 throw new NotSupportedException("The Model layout cannot be cloned.");
+            }
+
             if (string.Equals(newName, ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+            {
                 throw new ArgumentException("The layout name \"Model\" is reserved for the ModelSpace.");
+            }
 
             Layout copy = new Layout(newName, null, (PlotSettings) this.plot.Clone())
             {
@@ -312,7 +321,9 @@ namespace netDxf.Objects
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy;
         }
@@ -343,7 +354,9 @@ namespace netDxf.Objects
         {
             entityNumber = this.Owner.AssignHandle(entityNumber);
             if (this.isPaperSpace)
+            {
                 entityNumber = this.viewport.AssignHandle(entityNumber);
+            }
             return base.AssignHandle(entityNumber);
         }
 
@@ -363,7 +376,9 @@ namespace netDxf.Objects
         public int CompareTo(Layout other)
         {
             if (other == null)
+            {
                 throw new ArgumentNullException(nameof(other));
+            }
 
             return this.tabOrder.CompareTo(other.tabOrder);
         }

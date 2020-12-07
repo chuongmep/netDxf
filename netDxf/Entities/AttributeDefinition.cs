@@ -152,11 +152,7 @@ namespace netDxf.Entities
             this.prompt = string.Empty;
             this.attValue = null;
             this.position = Vector3.Zero;
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.style = style;
+            this.style = style ?? throw new ArgumentNullException(nameof(style));
             if (textHeight <= 0.0)
             {
                 throw new ArgumentOutOfRangeException(nameof(textHeight), this.attValue, "The attribute definition text height must be greater than zero.");
@@ -192,11 +188,7 @@ namespace netDxf.Entities
             get { return this.color; }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-                this.color = value;
+                this.color = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -249,11 +241,7 @@ namespace netDxf.Entities
             get { return this.transparency; }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-                this.transparency = value;
+                this.transparency = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 

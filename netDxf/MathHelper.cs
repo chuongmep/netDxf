@@ -89,8 +89,10 @@ namespace netDxf
             get { return epsilon; }
             set
             {
-                if(value<=0.0)
+                if (value <= 0.0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The epsilon value must be a positive number greater than zero.");
+                }
                 epsilon = value;
             }
         }
@@ -560,17 +562,17 @@ namespace netDxf
             double cos = Math.Cos(angle);
             double sin = Math.Sin(angle);
 
-            q.X += (cos + (1 - cos)*axis.X*axis.X)*v.X;
-            q.X += ((1 - cos)*axis.X*axis.Y - axis.Z*sin)*v.Y;
-            q.X += ((1 - cos)*axis.X*axis.Z + axis.Y*sin)*v.Z;
+            q.X += (cos + (1 - cos) * axis.X * axis.X) * v.X;
+            q.X += ((1 - cos) * axis.X * axis.Y - axis.Z * sin) * v.Y;
+            q.X += ((1 - cos) * axis.X * axis.Z + axis.Y * sin) * v.Z;
 
-            q.Y += ((1 - cos)*axis.X*axis.Y + axis.Z*sin)*v.X;
-            q.Y += (cos + (1 - cos)*axis.Y*axis.Y)*v.Y;
-            q.Y += ((1 - cos)*axis.Y*axis.Z - axis.X*sin)*v.Z;
+            q.Y += ((1 - cos) * axis.X * axis.Y + axis.Z * sin) * v.X;
+            q.Y += (cos + (1 - cos) * axis.Y * axis.Y) * v.Y;
+            q.Y += ((1 - cos) * axis.Y * axis.Z - axis.X * sin) * v.Z;
 
-            q.Z += ((1 - cos)*axis.X*axis.Z - axis.Y*sin)*v.X;
-            q.Z += ((1 - cos)*axis.Y*axis.Z + axis.X*sin)*v.Y;
-            q.Z += (cos + (1 - cos)*axis.Z*axis.Z)*v.Z;
+            q.Z += ((1 - cos) * axis.X * axis.Z - axis.Y * sin) * v.X;
+            q.Z += ((1 - cos) * axis.Y * axis.Z + axis.X * sin) * v.Y;
+            q.Z += (cos + (1 - cos) * axis.Z * axis.Z) * v.Z;
 
             return q;
         }

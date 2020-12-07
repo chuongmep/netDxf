@@ -254,7 +254,6 @@ namespace netDxf.IO
                             this.ReadAcdsData();
                             break;
                         default:
-                            Debug.Assert(false, string.Format("Unknown section {0}.", this.chunk.ReadString()));
                             this.ReadUnknowData();
                             break;
                     }
@@ -10662,8 +10661,7 @@ namespace netDxf.IO
                 }
 
                 // the viewport with id 1 is stored directly in the layout since it has no graphical representation
-                Viewport viewport = pair.Key as Viewport;
-                if (viewport != null)
+                if (pair.Key is Viewport viewport)
                 {
                     if (viewport.Id == 1)
                     {
@@ -10680,15 +10678,13 @@ namespace netDxf.IO
                 else
                 {
                     // apply the units scale to the insertion scale (this is for not nested blocks)
-                    Insert insert = pair.Key as Insert;
-                    if (insert != null)
+                    if (pair.Key is Insert insert)
                     {
                         double scale = UnitHelper.ConversionFactor(this.doc.DrawingVariables.InsUnits, insert.Block.Record.Units);
                         insert.Scale *= scale;
                     }
 
-                    AttributeDefinition attDef = pair.Key as AttributeDefinition;
-                    if (attDef != null)
+                    if (pair.Key is AttributeDefinition attDef)
                     {
                         if (!layout.AssociatedBlock.AttributeDefinitions.ContainsTag(attDef.Tag))
                         {
@@ -10696,8 +10692,7 @@ namespace netDxf.IO
                         }
                     }
 
-                    EntityObject entity = pair.Key as EntityObject;
-                    if (entity != null)
+                    if (pair.Key is EntityObject entity)
                     {
                         layout.AssociatedBlock.Entities.Add(entity);
                     }
@@ -10739,8 +10734,7 @@ namespace netDxf.IO
                     List<string> entities = this.hatchContours[path];
                     foreach (string handle in entities)
                     {
-                        EntityObject entity = this.doc.GetObjectByHandle(handle) as EntityObject;
-                        if (entity != null)
+                        if (this.doc.GetObjectByHandle(handle) is EntityObject entity)
                         {
                             if (ReferenceEquals(hatch.Owner, entity.Owner))
                             {
@@ -10788,8 +10782,7 @@ namespace netDxf.IO
             // post process leader annotations
             foreach (KeyValuePair<Leader, string> pair in this.leaderAnnotation)
             {
-                EntityObject entity = this.doc.GetObjectByHandle(pair.Value) as EntityObject;
-                if (entity != null)
+                if (this.doc.GetObjectByHandle(pair.Value) is EntityObject entity)
                 {
                     pair.Key.Annotation = entity;
                     pair.Key.Update(true);
@@ -10848,54 +10841,52 @@ namespace netDxf.IO
 
                 XRecord ls = this.xRecords[entry.Key];
 
-                using (IEnumerator<XRecordEntry> enumerator = ls.Entries.GetEnumerator())
+                using IEnumerator<XRecordEntry> enumerator = ls.Entries.GetEnumerator();
+
+                enumerator.MoveNext();
+
+                while (enumerator.Current != null)
                 {
-                    enumerator.MoveNext();
+                    XRecordEntry recordEntry = enumerator.Current;
 
-                    while (enumerator.Current != null)
+                    LayerStateProperties properties;
+                    switch (recordEntry.Code)
                     {
-                        XRecordEntry recordEntry = enumerator.Current;
-
-                        LayerStateProperties properties;
-                        switch (recordEntry.Code)
-                        {
-                            case 301:
-                                layerState.Description = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
-                                enumerator.MoveNext();
-                                break;
-                            case 302:
-                                string currentLayerName = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
-                                if (this.doc.Layers.Contains(currentLayerName))
-                                {
-                                    layerState.CurrentLayer = currentLayerName;
-                                }
-                                enumerator.MoveNext();
-                                break;
-                            case 290:
-                                layerState.PaperSpace = (bool) recordEntry.Value;
-                                enumerator.MoveNext();
-                                break;
-                            case 330:
-                                DxfObject o = this.doc.GetObjectByHandle((string) recordEntry.Value);
-                                Layer layer = o as Layer;
-                                if (layer != null)
-                                {
-                                    properties = this.ReadLayerStateProperties(layer.Name, enumerator);
-                                    layerState.Properties.Add(properties.Name, properties);
-                                }
-                                else
-                                {
-                                    enumerator.MoveNext();
-                                }
-                                break;
-                            case 8:
-                                properties = this.ReadLayerStateProperties((string) recordEntry.Value, enumerator);
+                        case 301:
+                            layerState.Description = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
+                            enumerator.MoveNext();
+                            break;
+                        case 302:
+                            string currentLayerName = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
+                            if (this.doc.Layers.Contains(currentLayerName))
+                            {
+                                layerState.CurrentLayer = currentLayerName;
+                            }
+                            enumerator.MoveNext();
+                            break;
+                        case 290:
+                            layerState.PaperSpace = (bool) recordEntry.Value;
+                            enumerator.MoveNext();
+                            break;
+                        case 330:
+                            DxfObject o = this.doc.GetObjectByHandle((string) recordEntry.Value);
+                            if (o is Layer layer)
+                            {
+                                properties = this.ReadLayerStateProperties(layer.Name, enumerator);
                                 layerState.Properties.Add(properties.Name, properties);
-                                break;
-                            default:
+                            }
+                            else
+                            {
                                 enumerator.MoveNext();
-                                break;
-                        }
+                            }
+                            break;
+                        case 8:
+                            properties = this.ReadLayerStateProperties((string) recordEntry.Value, enumerator);
+                            layerState.Properties.Add(properties.Name, properties);
+                            break;
+                        default:
+                            enumerator.MoveNext();
+                            break;
                     }
                 }
             }
@@ -11150,8 +11141,7 @@ namespace netDxf.IO
                 return text;
             }
 
-            string decoded;
-            if (this.decodedStrings.TryGetValue(text, out decoded))
+            if (this.decodedStrings.TryGetValue(text, out string decoded))
             {
                 return decoded;
             }
@@ -11168,9 +11158,8 @@ namespace netDxf.IO
                         // \U+#### where #### is a four digits hexadecimal number
                         if ((text[i + 1] == 'U' || text[i + 1] == 'u') && text[i + 2] == '+')
                         {
-                            int value;
                             string hex = text.Substring(i + 3, 4);
-                            if (int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value))
+                            if (int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int value))
                             {
                                 c = (char) value;
                                 i += 6;
@@ -11202,9 +11191,8 @@ namespace netDxf.IO
                 return;
             }
 
-            int num;
             string token = name.Remove(0, 2);
-            if (!int.TryParse(token, out num))
+            if (!int.TryParse(token, out int num))
             {
                 return;
             }
@@ -11223,9 +11211,9 @@ namespace netDxf.IO
             {
                 return;
             }
-            int num;
+
             string token = name.Remove(0, 2);
-            if (!int.TryParse(token, out num))
+            if (!int.TryParse(token, out int num))
             {
                 return;
             }
@@ -11307,8 +11295,7 @@ namespace netDxf.IO
 
         private ApplicationRegistry GetApplicationRegistry(string name)
         {
-            ApplicationRegistry appReg;
-            if (this.doc.ApplicationRegistries.TryGetValue(name, out appReg))
+            if (this.doc.ApplicationRegistries.TryGetValue(name, out ApplicationRegistry appReg))
             {
                 return appReg;
             }
@@ -11319,12 +11306,11 @@ namespace netDxf.IO
 
         private Block GetBlock(string name)
         {
-            Block block;
-            Debug.Assert(this.doc.Blocks.TryGetValue(name, out block), "The block with name " + name + " does not exist.");
-            if (this.doc.Blocks.TryGetValue(name, out block))
+            if (this.doc.Blocks.TryGetValue(name, out Block block))
             {
                 return block;
             }
+
             return this.doc.Blocks.Add(new Block(name));
         }
 
@@ -11336,8 +11322,7 @@ namespace netDxf.IO
                 name = Layer.DefaultName;
             }
 
-            Layer layer;
-            if (this.doc.Layers.TryGetValue(name, out layer))
+            if (this.doc.Layers.TryGetValue(name, out Layer layer))
             {
                 return layer;
             }
@@ -11354,8 +11339,7 @@ namespace netDxf.IO
                 name = Linetype.DefaultName;
             }
 
-            Linetype linetype;
-            if (this.doc.Linetypes.TryGetValue(name, out linetype))
+            if (this.doc.Linetypes.TryGetValue(name, out Linetype linetype))
             {
                 return linetype;
             }
@@ -11372,8 +11356,7 @@ namespace netDxf.IO
                 name = TextStyle.DefaultName;
             }
 
-            TextStyle style;
-            if (this.doc.TextStyles.TryGetValue(name, out style))
+            if (this.doc.TextStyles.TryGetValue(name, out TextStyle style))
             {
                 return style;
             }
@@ -11390,8 +11373,7 @@ namespace netDxf.IO
                 name = DimensionStyle.DefaultName;
             }
 
-            DimensionStyle style;
-            if (this.doc.DimensionStyles.TryGetValue(name, out style))
+            if (this.doc.DimensionStyles.TryGetValue(name, out DimensionStyle style))
             {
                 return style;
             }
@@ -11408,8 +11390,7 @@ namespace netDxf.IO
                 name = MLineStyle.DefaultName;
             }
 
-            MLineStyle style;
-            if (this.doc.MlineStyles.TryGetValue(name, out style))
+            if (this.doc.MlineStyles.TryGetValue(name, out MLineStyle style))
             {
                 return style;
             }

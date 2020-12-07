@@ -117,9 +117,7 @@ namespace netDxf.Units
                 return string.Format("{0}{1}{2}0{3}", feet, format.FeetSymbol, format.FeetInchesSeparator, format.InchesSymbol);
             }
 
-            int numerator;
-            int denominator;
-            GetFraction(inchesDec, (short) Math.Pow(2, format.LinearDecimalPlaces), out numerator, out denominator);
+            GetFraction(inchesDec, (short) Math.Pow(2, format.LinearDecimalPlaces), out int numerator, out int denominator);
 
             if (numerator == 0)
             {
@@ -257,9 +255,7 @@ namespace netDxf.Units
             }
 
             int num = (int) length;
-            int numerator;
-            int denominator;
-            GetFraction(length, (short) Math.Pow(2, format.LinearDecimalPlaces), out numerator, out denominator);
+            GetFraction(length, (short) Math.Pow(2, format.LinearDecimalPlaces), out int numerator, out int denominator);
             if (numerator == 0)
             {
                 return string.Format("{0}", (int) length);

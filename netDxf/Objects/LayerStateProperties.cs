@@ -243,11 +243,8 @@ namespace netDxf.Objects
                     DxfDocument doc = layer.Owner.Owner;
                     line = doc.Linetypes[this.LinetypeName];
                 }
-                if (line == null)
-                {
-                    line = new Linetype(this.LinetypeName);
-                }
-                layer.Linetype = line;
+                layer.Linetype = line ?? new Linetype(this.LinetypeName);
+                
             }
             if (options.HasFlag(LayerPropertiesRestoreFlags.Color))
             {

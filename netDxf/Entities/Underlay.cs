@@ -99,11 +99,7 @@ namespace netDxf.Entities
         public Underlay(UnderlayDefinition definition, Vector3 position, double scale)
             : base(EntityType.Underlay, DxfObjectCode.Underlay)
         {
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition));
-            }
-            this.definition = definition;
+            this.definition = definition ?? throw new ArgumentNullException(nameof(definition));
             this.position = position;
             if (scale <= 0)
             {

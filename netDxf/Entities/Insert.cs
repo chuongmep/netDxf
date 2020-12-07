@@ -151,12 +151,7 @@ namespace netDxf.Entities
         public Insert(Block block, Vector3 position, double scale)
             : base(EntityType.Insert, DxfObjectCode.Insert)
         {
-            if (block == null)
-            {
-                throw new ArgumentNullException(nameof(block));
-            }
-
-            this.block = block;
+            this.block = block ?? throw new ArgumentNullException(nameof(block));
             this.position = position;
             if (scale <= 0)
             {

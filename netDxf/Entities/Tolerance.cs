@@ -36,9 +36,7 @@ namespace netDxf.Entities
         #region delegates and events
 
         public delegate void ToleranceStyleChangedEventHandler(Tolerance sender, TableObjectChangedEventArgs<DimensionStyle> e);
-
         public event ToleranceStyleChangedEventHandler ToleranceStyleChanged;
-
         protected virtual DimensionStyle OnDimensionStyleChangedEvent(DimensionStyle oldStyle, DimensionStyle newStyle)
         {
             ToleranceStyleChangedEventHandler ae = this.ToleranceStyleChanged;

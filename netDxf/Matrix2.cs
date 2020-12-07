@@ -78,7 +78,7 @@ namespace netDxf
             get
             {
                 return new Matrix2(0.0, 0.0,
-                                   0.0, 0.0);
+                                   0.0, 0.0) {dirty = false, isIdentity = false};
             }
         }
 

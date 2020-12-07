@@ -493,6 +493,8 @@ namespace netDxf.IO
         /// </summary>
         /// <param name="table">Table type to open.</param>
         /// <param name="handle">Handle assigned to this table</param>
+        /// <param name="numEntries">Number of entries in the table (obsolete).</param>
+        /// <param name="xdata">Extended data information of the table.</param>
         private void BeginTable(string table, string handle, short numEntries, XDataDictionary xdata)
         {
             Debug.Assert(this.activeSection == DxfObjectCode.TablesSection);
@@ -2282,7 +2284,7 @@ namespace netDxf.IO
             this.chunk.Write(220, leader.Normal.Y);
             this.chunk.Write(230, leader.Normal.Z);
 
-            Vector3 dir = ocsVertexes[ocsVertexes.Count-1] - ocsVertexes[ocsVertexes.Count - 2];
+            Vector3 dir = ocsVertexes[^1] - ocsVertexes[^2];
 
             Vector3 xDir = MathHelper.Transform(new Vector3(dir.X, dir.Y, 0.0), leader.Normal, CoordinateSystem.Object, CoordinateSystem.World);
             xDir.Normalize();
@@ -3335,8 +3337,7 @@ namespace netDxf.IO
                 return;
             }
 
-            HatchGradientPattern gradientPattern = pattern as HatchGradientPattern;
-            if (gradientPattern != null)
+            if (pattern is HatchGradientPattern gradientPattern)
             {
                 this.WriteGradientHatchPattern(gradientPattern);
             }
@@ -3416,8 +3417,7 @@ namespace netDxf.IO
                 flags |= DimensionTypeFlags.UserTextPosition;
             }
 
-            OrdinateDimension ordinateDim = dim as OrdinateDimension;
-            if (ordinateDim != null)
+            if (dim is OrdinateDimension ordinateDim)
             {
                 // even if the documentation says that code 51 is optional, rotated ordinate dimensions will not work correctly if this value is not provided
                 this.chunk.Write(51, 360.0 - ordinateDim.Rotation);

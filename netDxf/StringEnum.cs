@@ -171,13 +171,15 @@ namespace netDxf
             {
                 //Look for our 'StringValueAttribute' in the field's custom attributes
                 FieldInfo fi = type.GetField(value.ToString());
-                StringValueAttribute[] attrs = fi.GetCustomAttributes(typeof(StringValueAttribute), false) as StringValueAttribute[];
-                if (attrs != null)
+                if (fi != null)
                 {
-                    if (attrs.Length > 0)
+                    if (fi.GetCustomAttributes(typeof(StringValueAttribute), false) is StringValueAttribute[] attrs)
                     {
-                        stringValues.Add(value, attrs[0]);
-                        output = attrs[0].Value;
+                        if (attrs.Length > 0)
+                        {
+                            stringValues.Add(value, attrs[0]);
+                            output = attrs[0].Value;
+                        }
                     }
                 }
             }
@@ -204,25 +206,14 @@ namespace netDxf
         public static T Parse(string value, StringComparison comparisonType)
         {
             Type type = typeof(T);
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            T output = default(T);
+            T output = default;
             string enumStringValue = null;
-
-            if (!type.IsEnum)
-            {
-                throw new ArgumentException(string.Format("The supplied type \"{0}\" must be an Enum.", type));
-            }
 
             //Look for our string value associated with fields in this enum
             foreach (FieldInfo fi in type.GetFields())
             {
                 //Check for our custom attribute
-                StringValueAttribute[] attrs = fi.GetCustomAttributes(typeof(StringValueAttribute), false) as StringValueAttribute[];
-                if (attrs != null)
+                if (fi.GetCustomAttributes(typeof(StringValueAttribute), false) is StringValueAttribute[] attrs)
                 {
                     if (attrs.Length > 0)
                     {

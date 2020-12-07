@@ -137,7 +137,9 @@ namespace netDxf.Tables
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The tolerance precision must be equals or greater than zero.");
+                }
                 this.dimtdec = value;
             }
         }
@@ -203,7 +205,9 @@ namespace netDxf.Tables
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), value, "The alternate precision must be equals or greater than zero.");
+                }
                 this.dimalttd = value;
             }
         }

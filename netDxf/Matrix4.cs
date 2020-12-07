@@ -120,7 +120,7 @@ namespace netDxf
                 return new Matrix4(0.0, 0.0, 0.0, 0.0,
                                    0.0, 0.0, 0.0, 0.0,
                                    0.0, 0.0, 0.0, 0.0,
-                                   0.0, 0.0, 0.0, 0.0);
+                                   0.0, 0.0, 0.0, 0.0) {dirty = false, isIdentity = false};
             }
         }
 

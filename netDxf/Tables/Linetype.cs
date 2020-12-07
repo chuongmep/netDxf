@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using netDxf.Collections;
 
 namespace netDxf.Tables
@@ -39,9 +40,7 @@ namespace netDxf.Tables
         #region delegates and events
 
         public delegate void LinetypeSegmentAddedEventHandler(Linetype sender, LinetypeSegmentChangeEventArgs e);
-
         public event LinetypeSegmentAddedEventHandler LinetypeSegmentAdded;
-
         protected virtual void OnLinetypeSegmentAddedEvent(LinetypeSegment item)
         {
             LinetypeSegmentAddedEventHandler ae = this.LinetypeSegmentAdded;
@@ -52,9 +51,7 @@ namespace netDxf.Tables
         }
 
         public delegate void LinetypeSegmentRemovedEventHandler(Linetype sender, LinetypeSegmentChangeEventArgs e);
-
         public event LinetypeSegmentRemovedEventHandler LinetypeSegmentRemoved;
-
         protected virtual void OnLinetypeSegmentRemovedEvent(LinetypeSegment item)
         {
             LinetypeSegmentRemovedEventHandler ae = this.LinetypeSegmentRemoved;
@@ -65,9 +62,7 @@ namespace netDxf.Tables
         }
 
         public delegate void LinetypeTextSegmentStyleChangedEventHandler(Linetype sender, TableObjectChangedEventArgs<TextStyle> e);
-
         public event LinetypeTextSegmentStyleChangedEventHandler LinetypeTextSegmentStyleChanged;
-
         protected virtual TextStyle OnLinetypeTextSegmentStyleChangedEvent(TextStyle oldTextStyle, TextStyle newTextStyle)
         {
             LinetypeTextSegmentStyleChangedEventHandler ae = this.LinetypeTextSegmentStyleChanged;
@@ -354,28 +349,27 @@ namespace netDxf.Tables
             }
 
             List<string> names = new List<string>();
-            using (StreamReader reader = new StreamReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
+            using StreamReader reader = new StreamReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
+                string line = reader.ReadLine();
+                if (line == null)
                 {
-                    string line = reader.ReadLine();
-                    if (line == null)
-                    {
-                        throw new FileLoadException("Unknown error reading LIN file.", file);
-                    }
-
-                    // every line type definition starts with '*'
-                    if (!line.StartsWith("*"))
-                    {
-                        continue;
-                    }
-
-                    // reading line type name and description
-                    int endName = line.IndexOf(',');
-                    // the first semicolon divides the name from the description that might contain more semicolons
-                    names.Add(line.Substring(1, endName - 1));
+                    throw new FileLoadException("Unknown error reading LIN file.", file);
                 }
+
+                // every line type definition starts with '*'
+                if (!line.StartsWith("*"))
+                {
+                    continue;
+                }
+
+                // reading line type name and description
+                int endName = line.IndexOf(',');
+                // the first semicolon divides the name from the description that might contain more semicolons
+                names.Add(line.Substring(1, endName - 1));
             }
+
             return names;
         }
 
@@ -405,79 +399,72 @@ namespace netDxf.Tables
 
             Linetype linetype = null;            
             List<LinetypeSegment> segments = new List<LinetypeSegment>();
-            using (StreamReader reader = new StreamReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
+            using StreamReader reader = new StreamReader(File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
+            while (!reader.EndOfStream)
             {
-                while (!reader.EndOfStream)
+                string line = reader.ReadLine();
+                if (line == null)
                 {
-                    string line = reader.ReadLine();
+                    throw new FileLoadException("Unknown error reading LIN file.", file);
+                }
+
+                // every line type definition starts with '*'
+                if (!line.StartsWith("*"))
+                {
+                    continue;
+                }
+
+                // reading line type name and description
+                int endName = line.IndexOf(','); // the first comma divides the name from the description that might contain more commas
+                string name = line.Substring(1, endName - 1);
+                string description = line.Substring(endName + 1, line.Length - endName - 1);
+
+                // remove start and end spaces
+                description = description.Trim();
+
+                if (name.Equals(linetypeName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // we have found the line type name, the next line of the file contains the line type definition
+                    line = reader.ReadLine();
                     if (line == null)
                     {
                         throw new FileLoadException("Unknown error reading LIN file.", file);
                     }
 
-                    // every line type definition starts with '*'
-                    if (!line.StartsWith("*"))
+                    string[] tokens = Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+
+                    // the index 0 is always A (alignment field)
+                    for (int i = 1; i < tokens.Length; i++)
                     {
-                        continue;
-                    }
-
-                    // reading line type name and description
-                    int endName = line.IndexOf(','); // the first comma divides the name from the description that might contain more commas
-                    string name = line.Substring(1, endName - 1);
-                    string description = line.Substring(endName + 1, line.Length - endName - 1);
-
-                    // remove start and end spaces
-                    description = description.Trim();
-
-                    if (name.Equals(linetypeName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // we have found the line type name, the next line of the file contains the line type definition
-                        line = reader.ReadLine();
-                        if (line == null)
+                        if (double.TryParse(tokens[i], NumberStyles.Float, CultureInfo.InvariantCulture, out double length))
                         {
-                            throw new FileLoadException("Unknown error reading LIN file.", file);
-                        }
-
-                        string[] tokens = System.Text.RegularExpressions.Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-
-                        // the index 0 is always A (alignment field)
-                        for (int i = 1; i < tokens.Length; i++)
-                        {
-                            double length;
-                            if (double.TryParse(tokens[i], NumberStyles.Float, CultureInfo.InvariantCulture, out length))
+                            // is the length followed by a shape or text segment
+                            if (i + 1 < tokens.Length)
                             {
-                                // is the length followed by a shape or text segment
-                                if (i + 1 < tokens.Length)
+                                if (tokens[i + 1].StartsWith("["))
                                 {
-                                    if (tokens[i + 1].StartsWith("["))
+                                    List<string> data = new List<string>();
+
+                                    // there are two kinds of complex linetype Text and Shape, the data is enclosed in brackets
+                                    for (++i; i < tokens.Length; i++)
                                     {
-                                        List<string> data = new List<string>();
-
-                                        // there are two kinds of complex linetype Text and Shape, the data is enclosed in brackets
-                                        for (++i; i < tokens.Length; i++)
-                                        {
-                                            data.Add(tokens[i]);
+                                        data.Add(tokens[i]);
                                             
-                                            // text and shape data must be enclosed by brackets
-                                            if (i >= tokens.Length)
-                                            {
-                                                throw new FormatException("The linetype definition is not well formatted.");
-                                            }
-
-                                            if (tokens[i].EndsWith("]"))
-                                            {
-                                                break;
-                                            }
-                                        }
-                                        LinetypeSegment segment = ReadLineTypeComplexSegment(data.ToArray(), length);
-                                        if (segment != null)
+                                        // text and shape data must be enclosed by brackets
+                                        if (i >= tokens.Length)
                                         {
-                                            segments.Add(segment);
+                                            throw new FormatException("The linetype definition is not well formatted.");
+                                        }
+
+                                        if (tokens[i].EndsWith("]"))
+                                        {
+                                            break;
                                         }
                                     }
-                                    else
+                                    LinetypeSegment segment = ReadLineTypeComplexSegment(data.ToArray(), length);
+                                    if (segment != null)
                                     {
-                                        segments.Add(new LinetypeSimpleSegment(length));
+                                        segments.Add(segment);
                                     }
                                 }
                                 else
@@ -487,14 +474,19 @@ namespace netDxf.Tables
                             }
                             else
                             {
-                                throw new FormatException("The linetype definition is not well formatted.");
+                                segments.Add(new LinetypeSimpleSegment(length));
                             }
                         }
-                        linetype = new Linetype(name, segments, description);
-                        break;
+                        else
+                        {
+                            throw new FormatException("The linetype definition is not well formatted.");
+                        }
                     }
+                    linetype = new Linetype(name, segments, description);
+                    break;
                 }
             }
+
             return linetype;
         }
 
@@ -581,7 +573,7 @@ namespace netDxf.Tables
         private static LinetypeSegment ReadLineTypeComplexSegment(string[] data, double length)
         {
             // the data is enclosed in brackets
-            Debug.Assert(data[0][0] == '[' || data[data.Length-1][data[data.Length-1].Length-1] == ']', "The data is enclosed in brackets.");
+            Debug.Assert(data[0][0] == '[' || data[^1][data[^1].Length-1] == ']', "The data is enclosed in brackets.");
 
             // the first data item in a complex linetype definition segment
             // can be a shape name or a text string, the last always is enclosed in ""
@@ -589,7 +581,7 @@ namespace netDxf.Tables
 
             // remove the start and end brackets
             data[0] = data[0].Remove(0, 1);
-            data[data.Length - 1] = data[data.Length - 1].Remove(data[data.Length - 1].Length - 1, 1);
+            data[^1] = data[^1].Remove(data[^1].Length - 1, 1);
 
             Vector2 position = Vector2.Zero;
             LinetypeSegmentRotationType rotationType = LinetypeSegmentRotationType.Relative;

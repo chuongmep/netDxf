@@ -33,13 +33,14 @@ namespace netDxf
         #region delegates and events
 
         public delegate void XDataAddAppRegEventHandler(DxfObject sender, ObservableCollectionEventArgs<ApplicationRegistry> e);
-
         public event XDataAddAppRegEventHandler XDataAddAppReg;
         protected virtual void OnXDataAddAppRegEvent(ApplicationRegistry item)
         {
             XDataAddAppRegEventHandler ae = this.XDataAddAppReg;
             if (ae != null)
+            {
                 ae(this, new ObservableCollectionEventArgs<ApplicationRegistry>(item));
+            }
         }
 
         public delegate void XDataRemoveAppRegEventHandler(DxfObject sender, ObservableCollectionEventArgs<ApplicationRegistry> e);
@@ -48,7 +49,9 @@ namespace netDxf
         {
             XDataRemoveAppRegEventHandler ae = this.XDataRemoveAppReg;
             if (ae != null)
+            {
                 ae(this, new ObservableCollectionEventArgs<ApplicationRegistry>(item));
+            }
         }
 
         #endregion
@@ -131,7 +134,7 @@ namespace netDxf
         /// <param name="entityNumber">Number to assign to the actual object.</param>
         /// <returns>Next available entity number.</returns>
         /// <remarks>
-        /// Some objects might consume more than one, is, for example, the case of polylines that will assign
+        /// Some objects might consume more than one, this is the case, for example, of polylines that will assign
         /// automatically a handle to its vertexes. The entity number will be converted to an hexadecimal number.
         /// </remarks>
         internal virtual long AssignHandle(long entityNumber)

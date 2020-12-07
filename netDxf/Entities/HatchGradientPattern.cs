@@ -90,9 +90,7 @@ namespace netDxf.Entities
         public HatchGradientPattern(AciColor color, double tint, HatchGradientPatternType type, string description)
             : base("SOLID", description)
         {
-            if (color == null)
-                throw new ArgumentNullException(nameof(color));
-            this.color1 = color;
+            this.color1 = color ?? throw new ArgumentNullException(nameof(color));
             this.color2 = this.Color2FromTint(tint);
             this.singleColor = true;
             this.gradientType = type;
@@ -121,12 +119,8 @@ namespace netDxf.Entities
         public HatchGradientPattern(AciColor color1, AciColor color2, HatchGradientPatternType type, string description)
             : base("SOLID", description)
         {
-            if (color1 == null)
-                throw new ArgumentNullException(nameof(color1));
-            this.color1 = color1;
-            if (color2 == null)
-                throw new ArgumentNullException(nameof(color2));
-            this.color2 = color2;
+            this.color1 = color1 ?? throw new ArgumentNullException(nameof(color1));
+            this.color2 = color2 ?? throw new ArgumentNullException(nameof(color2));
             this.singleColor = false;
             this.gradientType = type;
             this.tint = 1.0;
@@ -154,9 +148,7 @@ namespace netDxf.Entities
             get { return this.color1; }
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
-                this.color1 = value;
+                this.color1 = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 
@@ -171,10 +163,8 @@ namespace netDxf.Entities
             get { return this.color2; }
             set
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
                 this.singleColor = false;
-                this.color2 = value;
+                this.color2 = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 

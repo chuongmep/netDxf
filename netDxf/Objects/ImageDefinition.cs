@@ -252,7 +252,9 @@ namespace netDxf.Objects
             ImageDefinition copy = new ImageDefinition(newName, this.file, this.width, this.horizontalResolution, this.height, this.verticalResolution, this.resolutionUnits);
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy;
         }

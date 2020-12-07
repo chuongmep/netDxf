@@ -118,7 +118,9 @@ namespace netDxf.Entities
                 : base(EdgeType.Polyline)
             {
                 if (entity == null)
+                {
                     throw new ArgumentNullException(nameof(entity));
+                }
 
                 if (entity.Type == EntityType.LwPolyline)
                 {

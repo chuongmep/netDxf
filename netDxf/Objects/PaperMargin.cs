@@ -92,6 +92,7 @@ namespace netDxf.Objects
             get { return this.top; }
             set { this.top = value; }
         }
+
         #endregion      
     }
 }

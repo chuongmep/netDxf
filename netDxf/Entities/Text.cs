@@ -35,9 +35,7 @@ namespace netDxf.Entities
         #region delegates and events
 
         public delegate void TextStyleChangedEventHandler(Text sender, TableObjectChangedEventArgs<TextStyle> e);
-
         public event TextStyleChangedEventHandler TextStyleChanged;
-
         protected virtual TextStyle OnTextStyleChangedEvent(TextStyle oldTextStyle, TextStyle newTextStyle)
         {
             TextStyleChangedEventHandler ae = this.TextStyleChanged;
@@ -136,11 +134,7 @@ namespace netDxf.Entities
             this.position = position;
             this.alignment = TextAlignment.BaselineLeft;
             this.Normal = Vector3.UnitZ;
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.style = style;
+            this.style = style ?? throw new ArgumentNullException(nameof(style));
             if (height <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(height), this.text, "The Text height must be greater than zero.");

@@ -453,7 +453,9 @@ namespace netDxf
             set { this.views = value; }
         }
 
-
+        /// <summary>
+        /// Gets the <see cref="DrawingEntities">entities</see> shortcuts.
+        /// </summary>
         public DrawingEntities Entities
         {
             get { return this.entities; }

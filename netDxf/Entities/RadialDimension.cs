@@ -80,11 +80,7 @@ namespace netDxf.Entities
             this.center = new Vector2(ocsCenter.X, ocsCenter.Y);
             this.refPoint = Vector2.Polar(this.center, arc.Radius, rotation*MathHelper.DegToRad);
 
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
             this.Normal = arc.Normal;
             this.Elevation = ocsCenter.Z;
             this.Update();
@@ -120,11 +116,7 @@ namespace netDxf.Entities
             this.center = new Vector2(ocsCenter.X, ocsCenter.Y);
             this.refPoint = Vector2.Polar(this.center, circle.Radius, rotation*MathHelper.DegToRad);
 
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
             this.Normal = circle.Normal;
             this.Elevation = ocsCenter.Z;
             this.Update();
@@ -158,11 +150,7 @@ namespace netDxf.Entities
             this.center = centerPoint;
             this.refPoint = referencePoint;
 
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.Style = style;
+            this.Style = style ?? throw new ArgumentNullException(nameof(style));
 
             this.Update();
         }

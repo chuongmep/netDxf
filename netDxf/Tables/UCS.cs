@@ -56,7 +56,9 @@ namespace netDxf.Tables
             : base(name, DxfObjectCode.Ucs, checkName)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new ArgumentNullException(nameof(name), "The UCS name should be at least one character long.");
+            }
 
             this.origin = Vector3.Zero;
             this.xAxis = Vector3.UnitX;
@@ -84,7 +86,10 @@ namespace netDxf.Tables
             : base(name, DxfObjectCode.Ucs, checkName)
         {
             if (!Vector3.ArePerpendicular(xDirection, yDirection))
+            {
                 throw new ArgumentException("X-axis direction and Y-axis direction must be perpendicular.");
+            }
+
             this.origin = origin;
             this.xAxis = xDirection;
             this.xAxis.Normalize();
@@ -161,7 +166,9 @@ namespace netDxf.Tables
         public void SetAxis(Vector3 xDirection, Vector3 yDirection)
         {
             if (!Vector3.ArePerpendicular(xDirection, yDirection))
+            {
                 throw new ArgumentException("X-axis direction and Y-axis direction must be perpendicular.");
+            }
             this.xAxis = xDirection;
             this.xAxis.Normalize();
             this.yAxis = yDirection;
@@ -232,7 +239,9 @@ namespace netDxf.Tables
             };
 
             foreach (XData data in this.XData.Values)
+            {
                 copy.XData.Add((XData)data.Clone());
+            }
 
             return copy;
         }

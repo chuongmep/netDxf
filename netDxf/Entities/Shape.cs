@@ -91,11 +91,7 @@ namespace netDxf.Entities
                 throw new ArgumentNullException(nameof(name));
             }
             this.name = name;
-            if (style == null)
-            {
-                throw new ArgumentNullException(nameof(style));
-            }
-            this.style = style;
+            this.style = style ?? throw new ArgumentNullException(nameof(style));
             this.position = position;
             if (size <= 0)
             {
