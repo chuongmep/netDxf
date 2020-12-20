@@ -579,9 +579,9 @@ namespace netDxf.Entities
             if (this.style.Flags.HasFlag(MLineStyleFlags.DisplayJoints))
             {
                 AciColor color1 = this.style.Elements[0].Color;
-                AciColor color2 = this.style.Elements[^1].Color;
+                AciColor color2 = this.style.Elements[this.style.Elements.Count - 1].Color;
                 Linetype linetype1 = this.style.Elements[0].Linetype;
-                Linetype linetype2 = this.style.Elements[^1].Linetype;
+                Linetype linetype2 = this.style.Elements[this.style.Elements.Count - 1].Linetype;
 
                 for (int i = 0; i < cornerVertexes.Length; i++)
                 {
@@ -605,9 +605,9 @@ namespace netDxf.Entities
                 if (this.style.Flags.HasFlag(MLineStyleFlags.StartRoundCap))
                 {
                     AciColor color1 = this.style.Elements[0].Color;
-                    AciColor color2 = this.style.Elements[^1].Color;
+                    AciColor color2 = this.style.Elements[this.style.Elements.Count - 1].Color;
                     Linetype linetype1 = this.style.Elements[0].Linetype;
-                    Linetype linetype2 = this.style.Elements[^1].Linetype;
+                    Linetype linetype2 = this.style.Elements[this.style.Elements.Count - 1].Linetype;
 
                     Vector2 start = cornerVertexes[0][0];
                     Vector2 end = cornerVertexes[0][cornerVertexes[0].Length - 1];
@@ -640,9 +640,9 @@ namespace netDxf.Entities
                 if (this.style.Flags.HasFlag(MLineStyleFlags.StartSquareCap))
                 {
                     AciColor color1 = this.style.Elements[0].Color;
-                    AciColor color2 = this.style.Elements[^1].Color;
+                    AciColor color2 = this.style.Elements[this.style.Elements.Count - 1].Color;
                     Linetype linetype1 = this.style.Elements[0].Linetype;
-                    Linetype linetype2 = this.style.Elements[^1].Linetype;
+                    Linetype linetype2 = this.style.Elements[this.style.Elements.Count - 1].Linetype;
 
                     Vector2 start = cornerVertexes[0][0];
                     Vector2 end = cornerVertexes[0][cornerVertexes[0].Length - 1];
@@ -655,9 +655,9 @@ namespace netDxf.Entities
             {
                 if (this.style.Flags.HasFlag(MLineStyleFlags.EndRoundCap))
                 {
-                    AciColor color1 = this.style.Elements[^1].Color;
+                    AciColor color1 = this.style.Elements[this.style.Elements.Count - 1].Color;
                     AciColor color2 = this.style.Elements[0].Color;
-                    Linetype linetype1 = this.style.Elements[^1].Linetype;
+                    Linetype linetype1 = this.style.Elements[this.style.Elements.Count - 1].Linetype;
                     Linetype linetype2 = this.style.Elements[0].Linetype;
                    
                     Vector2 start = cornerVertexes[this.vertexes.Count - 1][cornerVertexes[0].Length - 1];
@@ -690,9 +690,9 @@ namespace netDxf.Entities
 
                 if (this.style.Flags.HasFlag(MLineStyleFlags.EndSquareCap))
                 {
-                    AciColor color1 = this.style.Elements[^1].Color;
+                    AciColor color1 = this.style.Elements[this.style.Elements.Count - 1].Color;
                     AciColor color2 = this.style.Elements[0].Color;
-                    Linetype linetype1 = this.style.Elements[^1].Linetype;
+                    Linetype linetype1 = this.style.Elements[this.style.Elements.Count - 1].Linetype;
                     Linetype linetype2 = this.style.Elements[0].Linetype;
 
                     Vector2 start = cornerVertexes[this.vertexes.Count - 1][cornerVertexes[0].Length - 1];

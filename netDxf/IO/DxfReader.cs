@@ -748,15 +748,13 @@ namespace netDxf.IO
                 switch (pair.Key.Type)
                 {
                     case LinetypeSegmentType.Shape:
-                        ShapeStyle shape = this.doc.GetObjectByHandle(pair.Value) as ShapeStyle;
-                        if (shape != null)
+                        if (this.doc.GetObjectByHandle(pair.Value) is ShapeStyle shape)
                         {
                             ((LinetypeShapeSegment)pair.Key).Style = shape;
                         }
                         break;
                     case LinetypeSegmentType.Text:
-                        TextStyle style = this.doc.GetObjectByHandle(pair.Value) as TextStyle;
-                        if (style != null)
+                        if (this.doc.GetObjectByHandle(pair.Value) is TextStyle style)
                         {
                             ((LinetypeTextSegment)pair.Key).Style = style;
                         }
@@ -842,8 +840,7 @@ namespace netDxf.IO
                 foreach (Attribute att in insert.Attributes)
                 {
                     // attribute definitions might be null if an INSERT entity attribute has not been defined in the block
-                    AttributeDefinition attDef;
-                    if (insert.Block.AttributeDefinitions.TryGetValue(att.Tag, out attDef))
+                    if (insert.Block.AttributeDefinitions.TryGetValue(att.Tag, out AttributeDefinition attDef))
                     {
                         att.Definition = attDef;
                     }
@@ -862,8 +859,7 @@ namespace netDxf.IO
             {
                 Dimension dim = pair.Key;
                 if (pair.Value == null) continue;
-                Block block;
-                if (blocks.TryGetValue(pair.Value, out block))
+                if (blocks.TryGetValue(pair.Value, out Block block))
                 {
                     dim.Block = block;
                 }
@@ -1198,8 +1194,7 @@ namespace netDxf.IO
                         }
                         break;
                     case DxfObjectCode.LinetypeTable:
-                        bool isComplex;
-                        Linetype linetype = this.ReadLinetype(out isComplex);
+                        Linetype linetype = this.ReadLinetype(out bool isComplex);
                         if (linetype != null)
                         {
                             linetype.Handle = handle;
@@ -1221,8 +1216,7 @@ namespace netDxf.IO
                         if (style != null)
                         {
                             style.Handle = handle;
-                            TextStyle textStyle = style as TextStyle;
-                            if (textStyle != null)
+                            if (style is TextStyle textStyle)
                             {
                                 this.doc.TextStyles.Add(textStyle, false);
                             }
@@ -1389,8 +1383,7 @@ namespace netDxf.IO
 
             // here is where DXF versions prior to AutoCad2007 stores the block units
             // read the layer transparency from the extended data
-            XData designCenterData;
-            if (record.XData.TryGetValue(ApplicationRegistry.DefaultName, out designCenterData))
+            if (record.XData.TryGetValue(ApplicationRegistry.DefaultName, out XData designCenterData))
             {
                 using (IEnumerator<XDataRecord> records = designCenterData.XDataRecord.GetEnumerator())
                 {
@@ -2306,8 +2299,7 @@ namespace netDxf.IO
             }
 
             // read the layer transparency from the extended data
-            XData xDataTransparency;
-            if (layer.XData.TryGetValue("AcCmTransparency", out xDataTransparency))
+            if (layer.XData.TryGetValue("AcCmTransparency", out XData xDataTransparency))
             {
                 // there should be only one entry with the transparency value, the first 1071 code will be used
                 foreach (XDataRecord record in xDataTransparency.XDataRecord)
@@ -2602,14 +2594,14 @@ namespace netDxf.IO
                 Debug.Assert(!string.IsNullOrEmpty(file), "File path is null or empty.");
                 if (string.IsNullOrEmpty(file))
                 {
-                    file = FileNotValid;
+                    file = FileNotValid + ".SHX";
                 }
 
                 // basic check if file is a file path
                 Debug.Assert(file.IndexOfAny(Path.GetInvalidPathChars()) == -1, "File path contains invalid characters: " + file);
                 if (file.IndexOfAny(Path.GetInvalidPathChars()) != -1)
                 {
-                    file = FileNotValid;
+                    file = FileNotValid + ".SHX";
                 }
 
                 //ShapeStyle shapeStyle = new ShapeStyle(Path.GetFileNameWithoutExtension(file), file, height, widthFactor, obliqueAngle);
@@ -2653,7 +2645,7 @@ namespace netDxf.IO
             Debug.Assert(file.IndexOfAny(Path.GetInvalidPathChars()) == -1, "File path contains invalid characters.");
             if (file.IndexOfAny(Path.GetInvalidPathChars()) != -1)
             {
-                return null;
+                file = FileNotValid + ".SHX";
             }
 
             // the information stored in the extended data takes precedence before the font file (this is only applicable for true type fonts)
@@ -2662,20 +2654,20 @@ namespace netDxf.IO
                 Debug.Assert(!string.IsNullOrEmpty(file), "File path is null or empty.");
                 if (string.IsNullOrEmpty(file))
                 {
-                    file = "simplex.shx";
+                    file = "simplex.SHX";
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(Path.GetExtension(file)))
                     {
                         // if there is no extension the default SHX will be used instead
-                        file += ".shx";
+                        file += ".SHX";
                     }
                     else if (!Path.GetExtension(file).Equals(".TTF", StringComparison.InvariantCultureIgnoreCase) &&
-                        !Path.GetExtension(file).Equals(".SHX", StringComparison.InvariantCultureIgnoreCase))
+                             !Path.GetExtension(file).Equals(".SHX", StringComparison.InvariantCultureIgnoreCase))
                     {
                         // only true type TTF fonts or compiled shape SHX fonts are allowed, the default "simplex.shx" font will be used in this case
-                        file = "simplex.shx";
+                        file = "simplex.SHX";
                     }
                 }
 
@@ -3041,7 +3033,9 @@ namespace netDxf.IO
                         break;
                     default:
                         if (this.chunk.Code >= 1000 && this.chunk.Code <= 1071)
+                        {
                             throw new Exception("The extended data of an entity must start with the application registry code.");
+                        }
                         this.chunk.Next();
                         break;
                 }
@@ -3053,14 +3047,12 @@ namespace netDxf.IO
                 DxfObject dxfObject = this.ReadEntity(true);
                 if (dxfObject != null)
                 {
-                    AttributeDefinition attDef = dxfObject as AttributeDefinition;
-                    if (attDef != null)
+                    if (dxfObject is AttributeDefinition attDef)
                     {
                         attDefs.Add(attDef);
                     }
 
-                    EntityObject entity = dxfObject as EntityObject;
-                    if (entity != null)
+                    if (dxfObject is EntityObject entity)
                     {
                         entities.Add(entity);
                     }
@@ -3089,7 +3081,9 @@ namespace netDxf.IO
             }
 
             if (!this.blockRecords.TryGetValue(name, out blockRecord))
+            {
                 throw new Exception(string.Format("The block record {0} is not defined.", name));
+            }
 
             Block block;
 
@@ -3627,7 +3621,10 @@ namespace netDxf.IO
                         break;
                     case 330:
                         owner = this.chunk.ReadHex();
-                        if (owner == "0") owner = null;
+                        if (owner == "0")
+                        {
+                            owner = null;
+                        }
                         this.chunk.Next();
                         break;
                     default:
@@ -3799,8 +3796,7 @@ namespace netDxf.IO
 
             dxfObject.Handle = handle;
 
-            EntityObject entity = dxfObject as EntityObject;
-            if (entity != null)
+            if (dxfObject is EntityObject entity)
             {
                 entity.Layer = layer;
                 entity.Color = color;
@@ -3811,8 +3807,7 @@ namespace netDxf.IO
                 entity.Transparency = transparency;
             }
 
-            AttributeDefinition attDef = dxfObject as AttributeDefinition;
-            if (attDef != null)
+            if (dxfObject is AttributeDefinition attDef)
             {
                 attDef.Layer = layer;
                 attDef.Color = color;
@@ -4273,8 +4268,7 @@ namespace netDxf.IO
             entity.XData.AddRange(xData);
 
             // here is where DXF stores the tolerance text height
-            XData heightXData;
-            if (entity.XData.TryGetValue(ApplicationRegistry.DefaultName, out heightXData))
+            if (entity.XData.TryGetValue(ApplicationRegistry.DefaultName, out XData heightXData))
             {
                 double textHeight = this.ReadToleranceTextHeightXData(heightXData);
                 if (textHeight > 0)
@@ -8968,9 +8962,8 @@ namespace netDxf.IO
             entity.XData.AddRange(xData);
 
             // here is where DXF stores the pattern origin
-            XData patternOrigin;
             Vector2 origin = Vector2.Zero;
-            if (entity.XData.TryGetValue(ApplicationRegistry.DefaultName, out patternOrigin))
+            if (entity.XData.TryGetValue(ApplicationRegistry.DefaultName, out XData patternOrigin))
             {
                 foreach (XDataRecord record in patternOrigin.XDataRecord)
                 {
@@ -9517,7 +9510,7 @@ namespace netDxf.IO
         private DictionaryObject ReadDictionary()
         {
             List<XData> xData = new List<XData>();
-            string handle = null;
+            string handle = string.Empty;
             //string handleOwner = null;
             DictionaryCloningFlags cloning = DictionaryCloningFlags.KeepExisting;
             bool isHardOwner = false;
@@ -9648,8 +9641,8 @@ namespace netDxf.IO
 
         private ImageDefinition ReadImageDefinition()
         {
-            string handle = string.Empty;
-            string ownerHandle = string.Empty;
+            string handle = null;
+            string ownerHandle = null;
             string file = string.Empty;
             string name = string.Empty;
             double width = 0, height = 0;
@@ -9730,13 +9723,13 @@ namespace netDxf.IO
             Debug.Assert(!string.IsNullOrEmpty(file), "File path is null or empty.");
             if (string.IsNullOrEmpty(file))
             {
-                file = FileNotValid;
+                file = FileNotValid + ".JPG";
             }
 
             Debug.Assert(file.IndexOfAny(Path.GetInvalidPathChars()) == -1, "File path contains invalid characters: " + file);
             if (file.IndexOfAny(Path.GetInvalidPathChars()) != -1)
             {
-                file = FileNotValid;
+                file = FileNotValid + ".JPG";
             }
 
             if (ownerHandle != null)
@@ -9747,6 +9740,12 @@ namespace netDxf.IO
                     throw new NullReferenceException();
                 }
                 name = imageDefDict.Entries[handle];
+            }
+
+            Debug.Assert(TableObject.IsValidName(name), "Table object name is not valid.");
+            if (!TableObject.IsValidName(name))
+            {
+                return null;
             }
 
             // The documentation says that this is the size of one pixel in AutoCAD units, but it seems that this is always the size of one pixel in millimeters
@@ -9801,8 +9800,8 @@ namespace netDxf.IO
         private MLineStyle ReadMLineStyle()
         {
             string handle = null;
-            string name = null;
-            string description = null;
+            string name = string.Empty;
+            string description = string.Empty;
             AciColor fillColor = AciColor.ByLayer;
             double startAngle = 90.0;
             double endAngle = 90.0;
@@ -9829,7 +9828,9 @@ namespace netDxf.IO
                         break;
                     case 62:
                         if (!fillColor.UseTrueColor)
+                        {
                             fillColor = AciColor.FromCadIndex(this.chunk.ReadShort());
+                        }
                         this.chunk.Next();
                         break;
                     case 420:
@@ -9843,13 +9844,17 @@ namespace netDxf.IO
                     case 51:
                         startAngle = this.chunk.ReadDouble();
                         if (startAngle < 10.0 || startAngle > 170.0)
+                        {
                             startAngle = 90.0;
+                        }
                         this.chunk.Next();
                         break;
                     case 52:
                         endAngle = this.chunk.ReadDouble();
                         if (endAngle < 10.0 || endAngle > 170.0)
+                        {
                             endAngle = 90.0;
+                        }
                         this.chunk.Next();
                         break;
                     case 71:
@@ -9867,8 +9872,12 @@ namespace netDxf.IO
                         break;
                 }
             }
-            if (string.IsNullOrEmpty(name))
+
+            Debug.Assert(TableObject.IsValidName(name), "Table object name is not valid.");
+            if (!TableObject.IsValidName(name))
+            {
                 return null;
+            }
 
             MLineStyle style = new MLineStyle(name, elements, description)
             {
@@ -9888,7 +9897,9 @@ namespace netDxf.IO
             this.chunk.Next();
 
             if (numElements <= 0)
+            {
                 return new List<MLineStyleElement> {new MLineStyleElement(0.0)};
+            }
             
             List<MLineStyleElement> elements = new List<MLineStyleElement>();
 
@@ -9925,8 +9936,9 @@ namespace netDxf.IO
         private Group ReadGroup()
         {
             string handle = null;
-            string description = null;
-            string name = null;
+            string ownerHandle = null;
+            string name = string.Empty;
+            string description = string.Empty;
             bool isUnnamed = true;
             bool isSelectable = true;
             List<string> entities = new List<string>();
@@ -9942,11 +9954,7 @@ namespace netDxf.IO
                         this.chunk.Next();
                         break;
                     case 330:
-                        string handleOwner = this.chunk.ReadHex();
-                        DictionaryObject dict = this.dictionaries[handleOwner];
-                        if (handle == null)
-                            throw new NullReferenceException("Null handle in Group dictionary.");
-                        name = dict.Entries[handle];
+                        ownerHandle = this.chunk.ReadHex();
                         this.chunk.Next();
                         break;
                     case 300:
@@ -9978,9 +9986,36 @@ namespace netDxf.IO
                 }
             }
 
+            if (!string.IsNullOrEmpty(ownerHandle))
+            {
+                DictionaryObject dict = this.dictionaries[ownerHandle];
+                Debug.Assert(!string.IsNullOrEmpty(handle), "Null handle in group dictionary.");
+
+                if (string.IsNullOrEmpty(handle))
+                {
+                    return null;
+                }
+                name = dict.Entries[handle];
+            }
+
             // we need to keep track of the group names generated
             if (isUnnamed)
+            {
                 this.CheckGroupName(name);
+                Debug.Assert(!string.IsNullOrEmpty(name), "The object name cannot be null.");
+                if (string.IsNullOrEmpty(name))
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                Debug.Assert(TableObject.IsValidName(name), "Table object name is not valid.");
+                if (!TableObject.IsValidName(name))
+                {
+                    return null;
+                }
+            }
 
             Group group = new Group(name, false)
             {
@@ -10001,7 +10036,7 @@ namespace netDxf.IO
         {
             PlotSettings plot = new PlotSettings();
             string handle = null;
-            string name = null;
+            string name = string.Empty;
             short tabOrder = 1;
             Vector2 minLimit = new Vector2(-20.0, -7.5);
             Vector2 maxLimit = new Vector2(277.0, 202.5);
@@ -10048,7 +10083,9 @@ namespace netDxf.IO
                 {
                     case 100:
                         if (this.chunk.ReadString() == SubclassMarker.PlotSettings)
+                        {
                             plot = this.ReadPlotSettings();
+                        }
                         this.chunk.Next();
                         break;
                     case 1:
@@ -10064,7 +10101,7 @@ namespace netDxf.IO
                         this.chunk.Next();
                         break;
                     case 20:
-                        minLimit.X = this.chunk.ReadDouble();
+                        minLimit.Y = this.chunk.ReadDouble();
                         this.chunk.Next();
                         break;
                     case 11:
@@ -10168,19 +10205,35 @@ namespace netDxf.IO
             }
 
             BlockRecord ownerRecord;
-            if (handle != null)
+            if (!string.IsNullOrEmpty(handle))
             {
                 if (this.blockRecordPointerToLayout.TryGetValue(handle, out ownerRecord))
+                {
                     this.blockRecordPointerToLayout.Remove(handle);
+                }
                 else
+                {
                     ownerRecord = this.doc.GetObjectByHandle(ownerRecordHandle) as BlockRecord;
+                }
             }
             else
+            {
                 ownerRecord = this.doc.GetObjectByHandle(ownerRecordHandle) as BlockRecord;
+            }
 
             if (ownerRecord != null)
+            {
                 if (this.doc.Blocks.GetReferences(ownerRecord.Name).Count > 0)
+                {
                     ownerRecord = null; // the block is already in use
+                }
+            }
+
+            Debug.Assert(TableObject.IsValidName(name), "Table object name is not valid.");
+            if (!TableObject.IsValidName(name))
+            {
+                return null;
+            }
 
             Layout layout = new Layout(name)
             {
@@ -10392,11 +10445,12 @@ namespace netDxf.IO
 
         private UnderlayDefinition ReadUnderlayDefinition(UnderlayType type)
         {
-            string handle = string.Empty;
-            string page = string.Empty;
-            string ownerHandle = string.Empty;
+            string handle = null;
+            string ownerHandle = null;
             string file = string.Empty;
             string name = string.Empty;
+            string page = string.Empty;
+
             List<XData> xData = new List<XData>();
 
             this.chunk.Next();
@@ -10444,20 +10498,35 @@ namespace netDxf.IO
                 file = FileNotValid;
             }
 
-            if (ownerHandle != null)
+            if (!string.IsNullOrEmpty(ownerHandle))
             {
                 DictionaryObject underlayDefDict = this.dictionaries[ownerHandle];
-                if (handle == null)
+                Debug.Assert(!string.IsNullOrEmpty(handle), "Null handle in underlay definition dictionary.");
+
+                if (string.IsNullOrEmpty(handle))
                 {
-                    throw new NullReferenceException("Null handle in underlay definition dictionary.");
+                    return null;
                 }
                 name = underlayDefDict.Entries[handle];
             }
 
+            Debug.Assert(TableObject.IsValidName(name), "Table object name is not valid.");
+            if (!TableObject.IsValidName(name))
+            {
+                return null;
+            }
+
             UnderlayDefinition underlayDef;
+            string ext = Path.GetExtension(file);
             switch (type)
             {
                 case UnderlayType.DGN:
+                    Debug.Assert(ext.Equals(".DGN", StringComparison.OrdinalIgnoreCase), "The underlay type and the file extension do not match.");
+                    
+                    if (!ext.Equals(".DGN", StringComparison.OrdinalIgnoreCase))
+                    {
+                        file = Path.ChangeExtension(FileNotValid, ".DGN");
+                    }
                     underlayDef = new UnderlayDgnDefinition(name, file)
                     {
                         Handle = handle,
@@ -10465,12 +10534,24 @@ namespace netDxf.IO
                     };
                     break;
                 case UnderlayType.DWF:
+                    Debug.Assert(ext.Equals(".DWF", StringComparison.OrdinalIgnoreCase), "The underlay type and the file extension do not match.");
+
+                    if (!ext.Equals(".DWF", StringComparison.OrdinalIgnoreCase))
+                    {
+                        file = Path.ChangeExtension(FileNotValid, ".DWF");
+                    }
                     underlayDef = new UnderlayDwfDefinition(name, file)
                     {
                         Handle = handle
                     };
                     break;
                 case UnderlayType.PDF:
+                    Debug.Assert(ext.Equals(".PDF", StringComparison.OrdinalIgnoreCase), "The underlay type and the file extension do not match.");
+
+                    if (!ext.Equals(".PDF", StringComparison.OrdinalIgnoreCase))
+                    {
+                        file = Path.ChangeExtension(FileNotValid, ".PDF");
+                    }
                     underlayDef = new UnderlayPdfDefinition(name, file)
                     {
                         Handle = handle,
@@ -10718,8 +10799,7 @@ namespace netDxf.IO
             // post process viewports clipping boundaries
             foreach (KeyValuePair<Viewport, string> pair in this.viewports)
             {
-                EntityObject entity = this.doc.GetObjectByHandle(pair.Value) as EntityObject;
-                if (entity != null)
+                if (this.doc.GetObjectByHandle(pair.Value) is EntityObject entity)
                 {
                     pair.Key.ClippingBoundary = entity;
                 }
@@ -10751,8 +10831,7 @@ namespace netDxf.IO
             {
                 foreach (string handle in pair.Value)
                 {
-                    EntityObject entity = this.doc.GetObjectByHandle(handle) as EntityObject;
-                    if (entity != null)
+                    if (this.doc.GetObjectByHandle(handle) is EntityObject entity)
                     {
                         pair.Key.Entities.Add(entity);
                     }
@@ -10764,16 +10843,14 @@ namespace netDxf.IO
             // therefore is better process it at the end, when everything has been created read dimension style overrides
             foreach (Dimension dim in this.doc.Entities.Dimensions)
             {
-                XData xDataOverrides;
-                if (dim.XData.TryGetValue(ApplicationRegistry.DefaultName, out xDataOverrides))
+                if (dim.XData.TryGetValue(ApplicationRegistry.DefaultName, out XData xDataOverrides))
                 {
                     dim.StyleOverrides.AddRange(this.ReadDimensionStyleOverrideXData(xDataOverrides));
                 }
             }
             foreach (Leader leader in this.doc.Entities.Leaders)
             {
-                XData xDataOverrides;
-                if (leader.XData.TryGetValue(ApplicationRegistry.DefaultName, out xDataOverrides))
+                if (leader.XData.TryGetValue(ApplicationRegistry.DefaultName, out XData xDataOverrides))
                 {
                     leader.StyleOverrides.AddRange(this.ReadDimensionStyleOverrideXData(xDataOverrides));
                 }
@@ -10841,52 +10918,55 @@ namespace netDxf.IO
 
                 XRecord ls = this.xRecords[entry.Key];
 
-                using IEnumerator<XRecordEntry> enumerator = ls.Entries.GetEnumerator();
-
-                enumerator.MoveNext();
-
-                while (enumerator.Current != null)
+                using (IEnumerator<XRecordEntry> enumerator = ls.Entries.GetEnumerator())
                 {
-                    XRecordEntry recordEntry = enumerator.Current;
+                    enumerator.MoveNext();
 
-                    LayerStateProperties properties;
-                    switch (recordEntry.Code)
+                    while (enumerator.Current != null)
                     {
-                        case 301:
-                            layerState.Description = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
-                            enumerator.MoveNext();
-                            break;
-                        case 302:
-                            string currentLayerName = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
-                            if (this.doc.Layers.Contains(currentLayerName))
-                            {
-                                layerState.CurrentLayer = currentLayerName;
-                            }
-                            enumerator.MoveNext();
-                            break;
-                        case 290:
-                            layerState.PaperSpace = (bool) recordEntry.Value;
-                            enumerator.MoveNext();
-                            break;
-                        case 330:
-                            DxfObject o = this.doc.GetObjectByHandle((string) recordEntry.Value);
-                            if (o is Layer layer)
-                            {
-                                properties = this.ReadLayerStateProperties(layer.Name, enumerator);
-                                layerState.Properties.Add(properties.Name, properties);
-                            }
-                            else
-                            {
+                        XRecordEntry recordEntry = enumerator.Current;
+
+                        LayerStateProperties properties;
+                        switch (recordEntry.Code)
+                        {
+                            case 301:
+                                layerState.Description = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
                                 enumerator.MoveNext();
-                            }
-                            break;
-                        case 8:
-                            properties = this.ReadLayerStateProperties((string) recordEntry.Value, enumerator);
-                            layerState.Properties.Add(properties.Name, properties);
-                            break;
-                        default:
-                            enumerator.MoveNext();
-                            break;
+                                break;
+                            case 302:
+                                string currentLayerName = this.DecodeEncodedNonAsciiCharacters((string) recordEntry.Value);
+                                if (this.doc.Layers.Contains(currentLayerName))
+                                {
+                                    layerState.CurrentLayer = currentLayerName;
+                                }
+
+                                enumerator.MoveNext();
+                                break;
+                            case 290:
+                                layerState.PaperSpace = (bool) recordEntry.Value;
+                                enumerator.MoveNext();
+                                break;
+                            case 330:
+                                DxfObject o = this.doc.GetObjectByHandle((string) recordEntry.Value);
+                                if (o is Layer layer)
+                                {
+                                    properties = this.ReadLayerStateProperties(layer.Name, enumerator);
+                                    layerState.Properties.Add(properties.Name, properties);
+                                }
+                                else
+                                {
+                                    enumerator.MoveNext();
+                                }
+
+                                break;
+                            case 8:
+                                properties = this.ReadLayerStateProperties((string) recordEntry.Value, enumerator);
+                                layerState.Properties.Add(properties.Name, properties);
+                                break;
+                            default:
+                                enumerator.MoveNext();
+                                break;
+                        }
                     }
                 }
             }
@@ -10895,8 +10975,8 @@ namespace netDxf.IO
         private LayerStateProperties ReadLayerStateProperties(string name, IEnumerator<XRecordEntry> enumerator)
         {
             LayerPropertiesFlags flags = LayerPropertiesFlags.Plot;
-            string lineTypeName = String.Empty;
-            string plotStyle = string.Empty;
+            string lineTypeName = string.Empty;
+            //string plotStyle = string.Empty;
             AciColor color = AciColor.Default;
             Lineweight lineweight = Lineweight.Default;
             Transparency transparency = new Transparency(0);
@@ -10933,7 +11013,7 @@ namespace netDxf.IO
                         lineTypeName = (string) recordEntry.Value;
                         break;
                     case 1:
-                        plotStyle = (string) recordEntry.Value;
+                        //plotStyle = (string) recordEntry.Value;
                         break;
                     case 440:
                         int alpha = (int) recordEntry.Value;

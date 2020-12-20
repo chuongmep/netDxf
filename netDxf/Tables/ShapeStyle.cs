@@ -35,7 +35,7 @@ namespace netDxf.Tables
     {
         #region private fields
 
-        private readonly string shapeFile;
+        private string shapeFile;
         private readonly double size;
         private readonly double widthFactor;
         private readonly double obliqueAngle;
@@ -100,11 +100,25 @@ namespace netDxf.Tables
         #region public properties
 
         /// <summary>
-        /// Gets the shape SHX file name.
+        /// Gets or sets the shape SHX file name.
         /// </summary>
         public string File
         {
             get { return this.shapeFile; }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                if (value.IndexOfAny(Path.GetInvalidPathChars()) == 0)
+                {
+                    throw new ArgumentException("File path contains invalid characters.", nameof(value));
+                }
+
+                this.shapeFile = value;
+            }
         }
 
         /// <summary>
@@ -166,27 +180,31 @@ namespace netDxf.Tables
                 throw new ArgumentException("The shape file must have the extension SHP.", nameof(file));
             }
 
-            using StreamReader reader = new StreamReader(System.IO.File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
-            while (!reader.EndOfStream)
+            using (StreamReader reader = new StreamReader(System.IO.File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
             {
-                string line = reader.ReadLine();
-                if (line == null)
+                while (!reader.EndOfStream)
                 {
-                    throw new FileLoadException("Unknown error reading SHP file.", file);
-                }
-                // lines starting with semicolons are comments
-                if (line.StartsWith(";"))
-                {
-                    continue;
-                }
-                // every shape definition starts with '*'
-                if (!line.StartsWith("*"))
-                {
-                    continue;
-                }
+                    string line = reader.ReadLine();
+                    if (line == null)
+                    {
+                        throw new FileLoadException("Unknown error reading SHP file.", file);
+                    }
 
-                string[] tokens = line.TrimStart('*').Split(',');
-                names.Add(tokens[2]);
+                    // lines starting with semicolons are comments
+                    if (line.StartsWith(";"))
+                    {
+                        continue;
+                    }
+
+                    // every shape definition starts with '*'
+                    if (!line.StartsWith("*"))
+                    {
+                        continue;
+                    }
+
+                    string[] tokens = line.TrimStart('*').Split(',');
+                    names.Add(tokens[2]);
+                }
             }
 
             return names;
@@ -341,30 +359,34 @@ namespace netDxf.Tables
                 return 0;
             }
 
-            using StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
-            while (!reader.EndOfStream)
+            using (StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
             {
-                string line = reader.ReadLine();
-                if (line == null)
+                while (!reader.EndOfStream)
                 {
-                    throw new FileLoadException("Unknown error reading SHP file.", f);
-                }
-                // lines starting with semicolons are comments
-                if (line.StartsWith(";"))
-                {
-                    continue;
-                }
-                // every shape definition starts with '*'
-                if (!line.StartsWith("*"))
-                {
-                    continue;
-                }
+                    string line = reader.ReadLine();
+                    if (line == null)
+                    {
+                        throw new FileLoadException("Unknown error reading SHP file.", f);
+                    }
 
-                string[] tokens = line.TrimStart('*').Split(',');
-                // the third item is the name of the shape
-                if (string.Equals(tokens[2], name, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return short.Parse(tokens[0]);
+                    // lines starting with semicolons are comments
+                    if (line.StartsWith(";"))
+                    {
+                        continue;
+                    }
+
+                    // every shape definition starts with '*'
+                    if (!line.StartsWith("*"))
+                    {
+                        continue;
+                    }
+
+                    string[] tokens = line.TrimStart('*').Split(',');
+                    // the third item is the name of the shape
+                    if (string.Equals(tokens[2], name, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return short.Parse(tokens[0]);
+                    }
                 }
             }
 
@@ -392,30 +414,34 @@ namespace netDxf.Tables
 
             if (string.IsNullOrEmpty(f)) return string.Empty;
 
-            using StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true);
-            while (!reader.EndOfStream)
+            using (StreamReader reader = new StreamReader(System.IO.File.Open(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), true))
             {
-                string line = reader.ReadLine();
-                if (line == null)
+                while (!reader.EndOfStream)
                 {
-                    throw new FileLoadException("Unknown error reading SHP file.", f);
-                }
-                // lines starting with semicolons are comments
-                if (line.StartsWith(";"))
-                {
-                    continue;
-                }
-                // every shape definition starts with '*'
-                if (!line.StartsWith("*"))
-                {
-                    continue;
-                }
+                    string line = reader.ReadLine();
+                    if (line == null)
+                    {
+                        throw new FileLoadException("Unknown error reading SHP file.", f);
+                    }
 
-                string[] tokens = line.TrimStart('*').Split(',');
-                // the first item is the number of the shape
-                if (short.Parse(tokens[0]) == number)
-                {
-                    return tokens[2];
+                    // lines starting with semicolons are comments
+                    if (line.StartsWith(";"))
+                    {
+                        continue;
+                    }
+
+                    // every shape definition starts with '*'
+                    if (!line.StartsWith("*"))
+                    {
+                        continue;
+                    }
+
+                    string[] tokens = line.TrimStart('*').Split(',');
+                    // the first item is the number of the shape
+                    if (short.Parse(tokens[0]) == number)
+                    {
+                        return tokens[2];
+                    }
                 }
             }
 

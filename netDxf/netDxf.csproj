@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net45;netstandard2.1;netcoreapp3.1;net5.0</TargetFrameworks>
     <Version>3.0.0</Version>
     <Authors>Daniel Carvajal</Authors>
     <Company>netDxf</Company>
@@ -11,17 +11,24 @@
     <SignAssembly>true</SignAssembly>
     <DelaySign>false</DelaySign>
     <AssemblyOriginatorKeyFile>netDxf.snk</AssemblyOriginatorKeyFile>
+    <PackageProjectUrl>https://github.com/haplokuon/netDxf</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/haplokuon/netDxf</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFrameworks)' == 'net45'">
+    <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\net5.0\netDxf.xml</DocumentationFile>
+    <DocumentationFile>netDxf.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
     <OutputPath></OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\net5.0\netDxf.xml</DocumentationFile>
+    <DocumentationFile>netDxf.xml</DocumentationFile>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <OutputPath></OutputPath>

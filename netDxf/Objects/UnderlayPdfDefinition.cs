@@ -1,7 +1,7 @@
-﻿#region netDxf library, Copyright (C) 2009-2018 Daniel Carvajal (haplokuon@gmail.com)
+﻿#region netDxf library, Copyright (C) 2009-2020 Daniel Carvajal (haplokuon@gmail.com)
 
 //                        netDxf library
-// Copyright (C) 2009-2018 Daniel Carvajal (haplokuon@gmail.com)
+// Copyright (C) 2009-2020 Daniel Carvajal (haplokuon@gmail.com)
 // 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 using netDxf.Collections;
 using netDxf.Tables;
@@ -44,6 +45,9 @@ namespace netDxf.Objects
         /// Initializes a new instance of the <c>UnderlayPdfDefinition</c> class.
         /// </summary>
         /// <param name="file">Underlay file name with full or relative path.</param>
+        /// <remarks>
+        /// The file extension must match the underlay type.
+        /// </remarks>
         public UnderlayPdfDefinition(string file)
             : this(Path.GetFileNameWithoutExtension(file), file)
         {
@@ -54,6 +58,9 @@ namespace netDxf.Objects
         /// </summary>
         /// <param name="name">Underlay definition name.</param>
         /// <param name="file">Underlay file name with full or relative path.</param>
+        /// <remarks>
+        /// The file extension must match the underlay type.
+        /// </remarks>
         public UnderlayPdfDefinition(string name, string file)
             : base(name, file, UnderlayType.PDF)
         {
@@ -70,7 +77,7 @@ namespace netDxf.Objects
         public string Page
         {
             get { return this.page; }
-            set { this.page = value; }
+            set { this.page = string.IsNullOrEmpty(value) ? string.Empty : value; }
         }
 
         /// <summary>

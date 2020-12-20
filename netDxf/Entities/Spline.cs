@@ -72,7 +72,7 @@ namespace netDxf.Entities
 
             this.fitPoints = new List<Vector3>(fitPoints);
             this.creationMethod = SplineCreationMethod.FitPoints;
-            this.isClosed = this.fitPoints[0].Equals(this.fitPoints[^1]);
+            this.isClosed = this.fitPoints[0].Equals(this.fitPoints[this.fitPoints.Count - 1]);
             this.flags = this.isClosed ? SplineTypeFlags.Closed | SplineTypeFlags.Rational : SplineTypeFlags.Rational;
         }
 
@@ -572,7 +572,7 @@ namespace netDxf.Entities
             {
                 precision -= 1;
                 uStart = this.knots[0];
-                uEnd = this.knots[^1];
+                uEnd = this.knots[this.knots.Count - 1];
             }
             else if (this.isPeriodic)
             {
@@ -582,7 +582,7 @@ namespace netDxf.Entities
             else
             {
                 uStart = this.knots[0];
-                uEnd = this.knots[^1];
+                uEnd = this.knots[this.knots.Count - 1];
             }
 
             double uDelta = (uEnd - uStart) / precision;
@@ -595,7 +595,7 @@ namespace netDxf.Entities
 
             if (!this.isClosed)
             {
-                vertexes.Add(this.controlPoints[^1].Position);
+                vertexes.Add(this.controlPoints[this.controlPoints.Count - 1].Position);
             }
 
             return vertexes;

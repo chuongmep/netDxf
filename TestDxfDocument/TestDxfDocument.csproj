@@ -19,11 +19,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\netDxf\netDxf.csproj" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+    <ProjectReference Include="..\netDxf\netDxf.csproj" />
   </ItemGroup>
 
   <ItemGroup>

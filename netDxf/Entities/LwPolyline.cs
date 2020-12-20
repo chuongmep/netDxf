@@ -220,7 +220,7 @@ namespace netDxf.Entities
                 this.vertexes[i].Bulge = -this.vertexes[i+1].Bulge;
             }
 
-            this.vertexes[^1].Bulge = -firstBulge;
+            this.vertexes[this.vertexes.Count - 1].Bulge = -firstBulge;
         }
 
         /// <summary>

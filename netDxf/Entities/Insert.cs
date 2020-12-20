@@ -1,7 +1,7 @@
-﻿#region netDxf library, Copyright (C) 2009-2019 Daniel Carvajal (haplokuon@gmail.com)
+﻿#region netDxf library, Copyright (C) 2009-2020 Daniel Carvajal (haplokuon@gmail.com)
 
 //                        netDxf library
-// Copyright (C) 2009-2019 Daniel Carvajal (haplokuon@gmail.com)
+// Copyright (C) 2009-2020 Daniel Carvajal (haplokuon@gmail.com)
 // 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -153,9 +153,9 @@ namespace netDxf.Entities
         {
             this.block = block ?? throw new ArgumentNullException(nameof(block));
             this.position = position;
-            if (scale <= 0)
+            if (MathHelper.IsZero(scale))
             {
-                throw new ArgumentOutOfRangeException(nameof(scale), scale, "The Insert scale must be greater than zero.");
+                throw new ArgumentOutOfRangeException(nameof(scale), scale, "The Insert scale cannot be zero.");
             }
             this.scale = new Vector3(scale);
             this.rotation = 0.0;

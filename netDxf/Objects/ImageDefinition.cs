@@ -1,7 +1,7 @@
-#region netDxf library, Copyright (C) 2009-2018 Daniel Carvajal (haplokuon@gmail.com)
+#region netDxf library, Copyright (C) 2009-2020 Daniel Carvajal (haplokuon@gmail.com)
 
 //                        netDxf library
-// Copyright (C) 2009-2018 Daniel Carvajal (haplokuon@gmail.com)
+// Copyright (C) 2009-2020 Daniel Carvajal (haplokuon@gmail.com)
 // 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using netDxf.Collections;
 using netDxf.Tables;
@@ -38,9 +37,9 @@ namespace netDxf.Objects
     {
         #region private fields
 
-        private readonly string file;
-        private readonly int width;
-        private readonly int height;
+        private string file;
+        private int width;
+        private int height;
         private ImageResolutionUnits resolutionUnits;
         private double horizontalResolution;
         private double verticalResolution;
@@ -148,32 +147,184 @@ namespace netDxf.Objects
             this.reactors = new Dictionary<string, ImageDefinitionReactor>();
         }
 
+#if NET45
+
+        ///  <summary>
+        ///  Initializes a new instance of the <c>ImageDefinition</c> class. Only available for Net Framework 4.5 builds.
+        ///  </summary>
+        ///  <param name="file">Image file name with full or relative path.</param>
+        /// <remarks>
+        ///  <para>
+        ///  The name of the file without extension will be used as the name of the image definition.
+        ///  </para>
+        ///  <para>
+        ///  Supported image formats: BMP, JPG, PNG, TIFF.<br />
+        ///  Even thought AutoCAD supports more image formats, this constructor is restricted to the ones the net framework supports in common with AutoCAD.
+        ///  Use the generic constructor instead.
+        ///  </para>
+        ///  <para>
+        ///  Note (this is from the ACAD docs): AutoCAD 2000, AutoCAD LT 2000, and later releases do not support LZW-compressed TIFF files,
+        ///  with the exception of English language versions sold in the US and Canada.<br />
+        ///  If you have TIFF files that were created using LZW compression and want to insert them into a drawing 
+        ///  you must save the TIFF files with LZW compression disabled.
+        ///  </para>
+        /// </remarks>
+        public ImageDefinition(string file)
+            : this(Path.GetFileNameWithoutExtension(file), file)
+        {
+        }
+
+        ///  <summary>
+        ///  Initializes a new instance of the <c>ImageDefinition</c> class. Only available for Net Framework 4.5 builds.
+        ///  </summary>
+        /// <param name="name">Image definition name.</param>
+        /// <param name="file">Image file name with full or relative path.</param>
+        /// <remarks>
+        ///  <para>
+        ///  The name assigned to the image definition must be unique.
+        ///  </para>
+        ///  <para>
+        ///  Supported image formats: BMP, JPG, PNG, TIFF.<br />
+        ///  Even thought AutoCAD supports more image formats, this constructor is restricted to the ones the .net library supports in common with AutoCAD.
+        ///  Use the generic constructor instead.
+        ///  </para>
+        ///  <para>
+        ///  Note (this is from the ACAD docs): AutoCAD 2000, AutoCAD LT 2000, and later releases do not support LZW-compressed TIFF files,
+        ///  with the exception of English language versions sold in the US and Canada.<br />
+        ///  If you have TIFF files that were created using LZW compression and want to insert them into a drawing 
+        ///  you must save the TIFF files with LZW compression disabled.
+        ///  </para>
+        /// </remarks>
+        public ImageDefinition(string name, string file)
+            : base(name, DxfObjectCode.ImageDef, false)
+        {
+            if (string.IsNullOrEmpty(file))
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            FileInfo info = new FileInfo(file);
+            if (!info.Exists)
+            {
+                throw new FileNotFoundException("Image file not found.", file);
+            }
+
+            this.file = file;
+
+            try
+            {
+                using (System.Drawing.Image bitmap = System.Drawing.Image.FromFile(file))
+                {
+                    this.width = bitmap.Width;
+                    this.height = bitmap.Height;
+                    this.horizontalResolution = bitmap.HorizontalResolution;
+                    this.verticalResolution = bitmap.VerticalResolution;
+                    // the System.Drawing.Image stores the image resolution in inches
+                    this.resolutionUnits = ImageResolutionUnits.Inches;
+                }
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Image file not supported.", file);
+            }
+
+            this.reactors = new Dictionary<string, ImageDefinitionReactor>();
+        }
+
+#endif
+
         #endregion
 
         #region public properties
 
         /// <summary>
-        /// Gets the image file.
+        /// Gets or sets the image file.
         /// </summary>
+        /// <remarks>
+        /// When changing the image file the other properties should also be modified accordingly to avoid distortions in the final image.
+        /// </remarks>
         public string File
         {
             get { return this.file; }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                if (value.IndexOfAny(Path.GetInvalidPathChars()) == 0)
+                {
+                    throw new ArgumentException("File path contains invalid characters.", nameof(value));
+                }
+
+                this.file = value;
+            }
         }
 
         /// <summary>
-        /// Gets the image width in pixels.
+        /// Gets or sets the image width in pixels.
         /// </summary>
         public int Width
         {
             get { return this.width; }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "The ImageDefinition width must be greater than zero.");
+                }
+                this.width = value;
+
+            }
         }
 
         /// <summary>
-        /// Gets the image height in pixels.
+        /// Gets or sets the image height in pixels.
         /// </summary>
         public int Height
         {
             get { return this.height; }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "The ImageDefinition height must be greater than zero.");
+                }
+                this.height = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the image horizontal resolution in pixels per unit.
+        /// </summary>
+        public double HorizontalResolution
+        {
+            get { return this.horizontalResolution; }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "The ImageDefinition horizontal resolution must be greater than zero.");
+                }
+                this.horizontalResolution = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the image vertical resolution in pixels per unit.
+        /// </summary>
+        public double VerticalResolution
+        {
+            get { return this.verticalResolution; }
+            set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "The ImageDefinition vertical resolution must be greater than zero.");
+                }
+                this.verticalResolution = value;
+            }
         }
 
         /// <summary>
@@ -204,21 +355,6 @@ namespace netDxf.Objects
             }
         }
 
-        /// <summary>
-        /// Gets the image horizontal resolution in pixels per unit.
-        /// </summary>
-        public double HorizontalResolution
-        {
-            get { return this.horizontalResolution; }
-        }
-
-        /// <summary>
-        /// Gets the image vertical resolution in pixels per unit.
-        /// </summary>
-        public double VerticalResolution
-        {
-            get { return this.verticalResolution; }
-        }
 
         /// <summary>
         /// Gets the owner of the actual image definition.

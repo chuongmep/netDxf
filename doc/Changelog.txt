@@ -1,5 +1,15 @@
 ## Change history
 
+### [2020/12/20]
+* netDxf targets multiple frameworks, predefined frameworks for Net Framework 4.5, Net Standard 2.1, Net Core 3.1, and NET 5.0.
+* The previously deleted nethods
+the ImageDefinition constructors "public ImageDefinition(string file)" and "public ImageDefinition(string name, string file)", and
+the TextStyle method "public static string TrueTypeFontFamilyName(string ttfFont)"
+are now only available when targeting the Net 4.5 framework.
+* The ImageDefinition properties File, Width, Height, HorizontalResolution, and VerticalResoultion now can be modified.
+* The ShapeStyle property File can now be modified.
+* The UnderlayDefinition property File can now be modified. The file extension must match its type.
+* (fixed) Negative scale values should be allowed in the Insert constructor as it is in the Scale property.
 
 ### [2020/12/16]
 * Updated the project to use NET 5.0.

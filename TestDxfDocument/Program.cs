@@ -32,7 +32,7 @@ namespace TestDxfDocument
 
             #region Samples for new and modified features 3.0.0
 
-            //CreateImageDefinition();
+            // CreateImageDefinition();
 
             #endregion
 
@@ -272,6 +272,9 @@ namespace TestDxfDocument
             System.Drawing.Image img = System.Drawing.Image.FromFile(imgFile);
             ImageDefinition imageDefinition = new ImageDefinition("MyImage", imgFile, img.Width, img.HorizontalResolution, img.Height, img.VerticalResolution, ImageResolutionUnits.Inches);
             Image image = new Image(imageDefinition, Vector2.Zero, 100, 100);
+
+            // The old constructors for the ImageDefinition class will only be available when using the Net Framework 4.5
+            //ImageDefinition imgDef = new ImageDefinition(imgFile);
 
             DxfDocument test = new DxfDocument();
             // All related shortcuts to the place where the entities are really stored are done through the Entities properperty of the DxfDocument
@@ -6476,7 +6479,7 @@ namespace TestDxfDocument
 
             //image.Normal = new Vector3(1, 1, 1);
             //image.Rotation = 30;
-
+            
             // you can pass a name that must be unique for the image definiton, by default it will use the file name without the extension
             string imgFile2 = @"img\image02.jpg";
             System.Drawing.Image img2 = System.Drawing.Image.FromFile(imgFile2);

@@ -2284,7 +2284,7 @@ namespace netDxf.IO
             this.chunk.Write(220, leader.Normal.Y);
             this.chunk.Write(230, leader.Normal.Z);
 
-            Vector3 dir = ocsVertexes[^1] - ocsVertexes[^2];
+            Vector3 dir = ocsVertexes[ocsVertexes.Count - 1] - ocsVertexes[ocsVertexes.Count - 2];
 
             Vector3 xDir = MathHelper.Transform(new Vector3(dir.X, dir.Y, 0.0), leader.Normal, CoordinateSystem.Object, CoordinateSystem.World);
             xDir.Normalize();
@@ -4754,8 +4754,7 @@ namespace netDxf.IO
             }
             foreach (DxfObject o in objects)
             {
-                Underlay underlay = o as Underlay;
-                if (underlay != null)
+                if (o is Underlay underlay)
                 {
                     this.chunk.Write(330, underlay.Handle);
                 }
@@ -5097,8 +5096,7 @@ namespace netDxf.IO
                 return string.Empty;
             }
 
-            string encoded;
-            if (this.encodedStrings.TryGetValue(text, out encoded))
+            if (this.encodedStrings.TryGetValue(text, out string encoded))
             {
                 return encoded;
             }
