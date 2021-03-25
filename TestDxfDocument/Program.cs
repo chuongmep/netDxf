@@ -28,7 +28,8 @@ namespace TestDxfDocument
     {
         public static void Main()
         {
-            DxfDocument doc = Test(@"sample.dxf");
+            Console.WriteLine("Start");
+            DxfDocument doc = Test(@"C:\Users\vcho\Downloads\Test12345.dxf");
 
             #region Samples for new and modified features 2.4.1
 
